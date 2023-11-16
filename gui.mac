@@ -1,0 +1,40 @@
+#
+# File menu :
+/gui/addMenu file File
+/gui/addButton file Quit exit
+#
+# Run menu :
+/gui/addMenu run Run
+/gui/addButton run "BeamOn 10" "/run/beamOn 10"
+/gui/addButton run "BeamOn 100" "/run/beamOn 100"
+#
+# Calorimeter menu :
+/gui/addMenu calo Calo
+/gui/addButton calo "ECAL single layer"  "/cal/geo/ecalLayerNum 1"
+/gui/addButton calo "HCAL single layer"  "/cal/geo/hcalLayerNum 1"
+#
+# Gun menu :
+/gui/addMenu gun Gun
+/gui/addButton gun "511 keV"   "/gun/energy 511 keV"
+/gui/addButton gun "662 keV"   "/gun/energy 662 keV"
+/gui/addButton gun "10 MeV"    "/gun/energy 10 MeV"
+/gui/addButton gun "100 MeV"   "/gun/energy 100 MeV"
+/gui/addButton gun "1 GeV"     "/gun/energy 1 GeV"
+/gui/addButton gun "10 GeV"    "/gun/energy 10 GeV"
+/gui/addButton gun "100 GeV"   "/gun/energy 100 GeV"
+/gui/addButton gun "511 keV/c" "/gun/momentumAmp 511 keV"
+/gui/addButton gun "662 keV/c" "/gun/momentumAmp 662 keV"
+/gui/addButton gun "10 MeV/c"  "/gun/momentumAmp 10 MeV"
+/gui/addButton gun "100 MeV/c" "/gun/momentumAmp 100 MeV"
+/gui/addButton gun "1 GeV/c"   "/gun/momentumAmp 1 GeV"
+/gui/addButton gun "10 GeV/c"  "/gun/momentumAmp 10 GeV"
+/gui/addButton gun "100 GeV/c" "/gun/momentumAmp 100 GeV"
+/gui/addButton gun "e-"        "/gun/particle e-"
+/gui/addButton gun "mu-"       "/gun/particle mu-"
+/gui/addButton gun "pi0"       "/gun/particle pi0"
+/gui/addButton gun "pi+"       "/gun/particle pi+"
+/gui/addButton gun "kaon0L"    "/gun/particle kaon0L"
+/gui/addButton gun "gamma"     "/gun/particle gamma"
+/gui/addButton gun "neutron"   "/gun/particle neutron"
+/gui/addButton gun "proton"    "/gun/particle proton"
+#
