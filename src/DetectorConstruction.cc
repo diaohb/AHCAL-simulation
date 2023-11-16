@@ -552,6 +552,11 @@ namespace SimCalModule
             EcalAbsLogical->SetVisAttributes(AbsVisAtt);
         if (HcalModuleType > 0 && HcalAbsorberThick > 0)
             HcalAbsLogical->SetVisAttributes(AbsVisAtt);
+        HcalAbsLogical->SetVisAttributes(AbsVisAtt);
+        AbsVisAtt =new G4VisAttributes(G4Colour(0.9,0,0));
+        HcalPCB_Cu_Logical->SetVisAttributes(AbsVisAtt);
+        AbsVisAtt =new G4VisAttributes(G4Colour(0,0.9,0));
+        HcalPCBLogical->SetVisAttributes(AbsVisAtt);
         World_Logical->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         return World_Physical;

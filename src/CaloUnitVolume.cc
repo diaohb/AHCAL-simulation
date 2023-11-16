@@ -103,6 +103,10 @@ namespace SimCalModule
         SensitiveVisAtt->SetVisibility(true);
         SensitiveLogical->SetVisAttributes(SensitiveVisAtt);
 
+        G4VisAttributes *Sensitive_dig_out_VisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.));
+        Sensitive_dig_out_VisAtt->SetVisibility(true);
+        Sensitive_dig_out_Logical->SetVisAttributes(Sensitive_dig_out_VisAtt);
+
         if (ThisUnitParameter->AttachThick > 0)
         {
             G4VisAttributes *AttachVisAtt = new G4VisAttributes(G4Colour(0, 1.0, 0));
