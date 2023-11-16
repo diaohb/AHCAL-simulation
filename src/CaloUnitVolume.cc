@@ -71,8 +71,8 @@ namespace SimCalModule
 
             // Sensitive
             G4Box *SolidSensitive_dig_out = new G4Box("SolidSensitive_dig_out", Sensitive_dig_out_x, Sensitive_dig_out_y, Sensitive_dig_out_z);
-            Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "SensitiveLogical");
-            new G4PVPlacement(0, G4ThreeVector(0,0,Sensitive_z-Sensitive_dig_out_z), SensitiveLogical, "SensitivePhysical", SensitiveLogical, false, 0, pcheckOverlaps);
+            Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive_dig_out, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "SensitiveLogical");
+            new G4PVPlacement(0, G4ThreeVector(0,0,-Sensitive_z+Sensitive_dig_out_z), Sensitive_dig_out_Logical, "SensitivePhysical", SensitiveLogical, false, 0, pcheckOverlaps);
             SetVisAttributes();
 
             fConstructor->SetCaloLogicalVolume(pCaloSensitiveLogical, SensitiveLogical);
