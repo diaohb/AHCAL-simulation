@@ -37,8 +37,8 @@ namespace SimCalModule
             G4double Passive_x = Sensitive_x + ThisUnitParameter->PassiveSideThick;
             G4double Passive_y = Sensitive_y + ThisUnitParameter->PassiveSideThick;
             G4double Passive_z = Sensitive_z + ThisUnitParameter->PassiveCoverThick;
-            G4double Housing_x = Passive_x;
-            G4double Housing_y = Passive_y;
+            G4double Housing_x = ThisUnitParameter->House_X;
+            G4double Housing_y = ThisUnitParameter->House_X;
             G4double Housing_z = Passive_z + ((G4int)(ThisUnitParameter->ifDoubleSidedReadout) + 1) * ThisUnitParameter->AttachThick / 2.;
 
             // Box for housing

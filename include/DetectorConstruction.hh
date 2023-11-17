@@ -52,6 +52,8 @@ namespace SimCalModule
         G4double Sensitive_dig_out_X;
         G4double Sensitive_dig_out_Y;
         G4double Sensitive_dig_out_Z;
+        G4double House_X;
+        G4double House_Y;
         MaterialIndex SensitiveMatIndex;
         MaterialIndex Sensitive_dig_out_MatIndex;
         MaterialIndex PassiveMatIndex;

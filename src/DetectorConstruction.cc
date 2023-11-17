@@ -61,12 +61,15 @@ namespace SimCalModule
         EcalUnitParameter.SensitiveMatIndex = PlasticSciECAL;
         EcalUnitParameter.PassiveMatIndex = ESR;
         EcalUnitParameter.AttachMatIndex = Quartz;
+        
         HcalUnitParameter.ifDoubleSidedReadout = false;
         HcalUnitParameter.SensitiveLength = 3.0 * mm;
         HcalUnitParameter.SensitiveX = 40.0 * mm;
         HcalUnitParameter.SensitiveY = HcalUnitParameter.SensitiveX;
         HcalUnitParameter.PassiveSideThick = 0.065 * mm;
         HcalUnitParameter.PassiveCoverThick = 0.065 * mm;
+        HcalUnitParameter.House_X = 43.0 * mm;
+        HcalUnitParameter.House_Y = HcalUnitParameter.House_X;
         HcalUnitParameter.AttachThick = 0 * mm;
         HcalUnitParameter.Sensitive_dig_out_X = 5.5 * mm;
         HcalUnitParameter.Sensitive_dig_out_Y = HcalUnitParameter.Sensitive_dig_out_X;
@@ -432,8 +435,8 @@ namespace SimCalModule
         }
 
         // HCAL
-        G4double HcalUnitSizeX = HcalUnitParameter.SensitiveX + 2. * HcalUnitParameter.PassiveSideThick;
-        G4double HcalUnitSizeY = HcalUnitParameter.SensitiveY + 2. * HcalUnitParameter.PassiveSideThick;
+        G4double HcalUnitSizeX = HcalUnitParameter.House_X;//HcalUnitParameter.SensitiveX + 2. * HcalUnitParameter.PassiveSideThick;
+        G4double HcalUnitSizeY = HcalUnitParameter.House_X;//HcalUnitParameter.SensitiveY + 2. * HcalUnitParameter.PassiveSideThick;
         G4double HcalUnitSizeZ = HcalUnitParameter.SensitiveLength + 2. * HcalUnitParameter.PassiveCoverThick + ((G4int)(HcalUnitParameter.ifDoubleSidedReadout) + 1) * HcalUnitParameter.AttachThick;
         G4Box *HcalAbsSolid = nullptr;
         G4LogicalVolume *HcalAbsLogical = nullptr;
