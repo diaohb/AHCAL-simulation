@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
 	// auto runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::SerialOnly);
 	auto runManager = G4RunManagerFactory::CreateRunManager();
-	G4int nThreads = std::min(G4Threading::G4GetNumberOfCores(), 4);
+	G4int nThreads = std::min(G4Threading::G4GetNumberOfCores(), 10);
 	runManager->SetNumberOfThreads(nThreads);
 
     auto Detector = new DetectorConstruction();

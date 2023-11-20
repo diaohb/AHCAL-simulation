@@ -71,8 +71,13 @@ namespace SimCalModule
 
             // Sensitive
             G4Box *SolidSensitive_dig_out = new G4Box("SolidSensitive_dig_out", Sensitive_dig_out_x, Sensitive_dig_out_y, Sensitive_dig_out_z);
-            Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive_dig_out, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "SensitiveLogical");
-            new G4PVPlacement(0, G4ThreeVector(0,0,-Sensitive_z+Sensitive_dig_out_z), Sensitive_dig_out_Logical, "SensitivePhysical", SensitiveLogical, false, 0, pcheckOverlaps);
+            Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive_dig_out, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "Sensitive_dig_out_Logical");
+            new G4PVPlacement(0, G4ThreeVector(0,0,-Sensitive_z+Sensitive_dig_out_z), Sensitive_dig_out_Logical, "Sensitive_dig_out_Physical", SensitiveLogical, false, 0, pcheckOverlaps);
+            SetVisAttributes();
+
+            G4Box *SolidSensitive_dig_out_ESR = new G4Box("SolidSensitive_dig_out_ESR", Sensitive_dig_out_x, Sensitive_dig_out_y, ThisUnitParameter->PassiveCoverThick);
+            Sensitive_dig_out_Logical_ESR = new G4LogicalVolume(SolidSensitive_dig_out_ESR, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "Sensitive_dig_out_Logical_ESR");
+            new G4PVPlacement(0, G4ThreeVector(0,0,-Passive_z), Sensitive_dig_out_Logical_ESR, "Sensitive_dig_out_Physical_ESR", PassiveLogical, false, 0, pcheckOverlaps);
             SetVisAttributes();
 
             fConstructor->SetCaloLogicalVolume(pCaloSensitiveLogical, SensitiveLogical);
@@ -106,6 +111,7 @@ namespace SimCalModule
         G4VisAttributes *Sensitive_dig_out_VisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.));
         Sensitive_dig_out_VisAtt->SetVisibility(true);
         Sensitive_dig_out_Logical->SetVisAttributes(Sensitive_dig_out_VisAtt);
+        Sensitive_dig_out_Logical_ESR->SetVisAttributes(Sensitive_dig_out_VisAtt);
 
         if (ThisUnitParameter->AttachThick > 0)
         {
