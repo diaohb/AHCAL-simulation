@@ -11,7 +11,7 @@
 
 #include "Randomize.hh"
 
-#include "G4GDMLParser.hh"
+//#include "G4GDMLParser.hh"
 #include "G4TransportationManager.hh"
 
 using namespace SimCalModule;
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     }
 
     // GDML
-    if (argc == 4)
+/*    if (argc == 4)
     {
         G4GDMLParser parser;
         parser.SetRegionExport(true);
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         parser.SetOutputFileOverwrite(true);
         parser.Write(argv[3], G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume()->GetLogicalVolume());
     }
-
+*/
     // job termination
     delete visManager;
     delete runManager;
