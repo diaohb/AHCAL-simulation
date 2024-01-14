@@ -104,9 +104,9 @@ namespace SimCalModule
         EcalCellNumberX = 5;
         EcalCellNumberY = 42;
         EcalLayerNumber = 32;
-        HcalCellNumberX = 18;
-        HcalCellNumberY = 18;
-        HcalLayerNumber = 40;
+        HcalCellNumberX = 2;
+        HcalCellNumberY = 2;
+        HcalLayerNumber = 2;
         EcalModuleType = 0; // 0:Off; 1:Cube; 2:Crossed bar; 3:ScW ECAL
         HcalModuleType = 1; // 0:Off; 1:AHCAL; 2:GSHCAL
         EcalStepTimeLimit = 150.0 * ns;
