@@ -54,6 +54,7 @@ namespace SimCalModule
         G4double Sensitive_dig_out_Z;
         G4double House_X;
         G4double House_Y;
+        G4double House_Z;
         MaterialIndex SensitiveMatIndex;
         MaterialIndex Sensitive_dig_out_MatIndex;
         MaterialIndex PassiveMatIndex;
@@ -101,6 +102,7 @@ namespace SimCalModule
         G4double EcalAbsorberThick;
         G4double HcalAbsorberThick;
         G4double EcalPCBThick;
+        G4double HcaltriggerThick;
         G4double HcalPCBThick;
         G4double HcalPCB_Cu_Thick;
         G4double HcalPCB_Abs_gap;
@@ -112,6 +114,7 @@ namespace SimCalModule
         G4double IntermediateSizeZ;
         G4double EcalStepTimeLimit;
         G4double HcalStepTimeLimit;
+        MaterialIndex HcaltriggerIndex;
         MaterialIndex WorldMatIndex;
         MaterialIndex EcalAbsorberMatIndex;
         MaterialIndex HcalAbsorberMatIndex;

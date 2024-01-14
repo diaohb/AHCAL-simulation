@@ -1,7 +1,7 @@
 #!/bin/bash
-Time=1119
+Time=1221_25000126_2020
 Project=SimCalModule
-RunNumber=100
+RunNumber=200
 MyDir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal/run/${Time}
 OutDir=${MyDir}/calo
 

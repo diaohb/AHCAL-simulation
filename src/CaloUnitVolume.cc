@@ -1,5 +1,4 @@
 #include "CaloUnitVolume.hh"
-
 #include "G4Box.hh"
 #include "G4Orb.hh"
 #include "G4Colour.hh"
@@ -37,9 +36,9 @@ namespace SimCalModule
             G4double Passive_x = Sensitive_x + ThisUnitParameter->PassiveSideThick;
             G4double Passive_y = Sensitive_y + ThisUnitParameter->PassiveSideThick;
             G4double Passive_z = Sensitive_z + ThisUnitParameter->PassiveCoverThick;
-            G4double Housing_x = ThisUnitParameter->House_X;
-            G4double Housing_y = ThisUnitParameter->House_X;
-            G4double Housing_z = Passive_z + ((G4int)(ThisUnitParameter->ifDoubleSidedReadout) + 1) * ThisUnitParameter->AttachThick / 2.;
+            G4double Housing_x = ThisUnitParameter->House_X/2.;
+            G4double Housing_y = ThisUnitParameter->House_Y/2.;
+            G4double Housing_z = ThisUnitParameter->House_Z/2.;//Passive_z + ((G4int)(ThisUnitParameter->ifDoubleSidedReadout) + 1) * ThisUnitParameter->AttachThick / 2.;
 
             // Box for housing
             G4Box *SolidHousing = new G4Box("SolidHousing", Housing_x, Housing_y, Housing_z);

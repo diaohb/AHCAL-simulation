@@ -68,8 +68,9 @@ namespace SimCalModule
         HcalUnitParameter.SensitiveY = HcalUnitParameter.SensitiveX;
         HcalUnitParameter.PassiveSideThick = 0.065 * mm;
         HcalUnitParameter.PassiveCoverThick = 0.065 * mm;
-        HcalUnitParameter.House_X = 43.0 * mm;
+        HcalUnitParameter.House_X = 40.3 * mm;
         HcalUnitParameter.House_Y = HcalUnitParameter.House_X;
+        HcalUnitParameter.House_Z = 3.5 * mm;
         HcalUnitParameter.AttachThick = 0 * mm;
         HcalUnitParameter.Sensitive_dig_out_X = 5.5 * mm;
         HcalUnitParameter.Sensitive_dig_out_Y = HcalUnitParameter.Sensitive_dig_out_X;
@@ -81,9 +82,11 @@ namespace SimCalModule
         EcalAbsorberThick = 3.2 * mm; // 3.2 mm for ScW ECAL
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
-        HcalPCBThick = 3.0 * mm;  //2.5mm *4/5 for PCB, 1mm for component
-        HcalPCB_Cu_Thick = 0.5 * mm; //2.5mm *1/5
-        HcalPCB_Abs_gap = 3.5 * mm; //4mm-1mm+0.5mm
+        HcaltriggerThick = 60.0 * mm;
+        HcaltriggerIndex = PlasticSciHCAL;
+        HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
+        HcalPCB_Cu_Thick = 0.0 * mm; //2.5mm *1/5
+        HcalPCB_Abs_gap = 4.0 * mm; //4mm-1mm
         UpstreamSizeX = 0 * mm;
         UpstreamSizeY = 0 * mm;
         UpstreamSizeZ = 0 * mm;
@@ -182,17 +185,17 @@ namespace SimCalModule
         EpoxyMat->AddElement(EleO, nAtoms = 3);
         MaterialStore.push_back(EpoxyMat); // 10
 
-        // G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-        // FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
-        // FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
+		G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
+		FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
+		FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
         
         //PCB:Cu=4:1, frac of V, thick=2.5mm
         // components_thick=3mm/3=1mm, mat=FR4
         //total FR4:Cu=3mm:0.5mm, density=(3*1.86+0.5*8.9)/(3+0.5)=2.86
 
-        G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-        FR4Mat->AddMaterial(QuartzMat, fracMass = 50 * perCent);
-        FR4Mat->AddMaterial(EpoxyMat, fracMass = 50 * perCent);
+        // G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
+        // FR4Mat->AddMaterial(QuartzMat, fracMass = 50 * perCent);
+        // FR4Mat->AddMaterial(EpoxyMat, fracMass = 50 * perCent);
         // FR4Mat->AddMaterial(CuMat, fracMass = 44.4 * perCent);
         MaterialStore.push_back(FR4Mat); // 11
 
@@ -214,7 +217,7 @@ namespace SimCalModule
         MaterialStore.push_back(BGOMat); // 14
 
         G4Material *PlasticSciHCALMat = nistManager->BuildMaterialWithNewDensity("polystyrene", "G4_POLYSTYRENE", 1.032 * g / cm3);
-        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.07943 * mm / MeV);
+        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
         MaterialStore.push_back(PlasticSciHCALMat); // 15
 
         G4Material *PlasticSciECALMat = nistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
@@ -229,7 +232,7 @@ namespace SimCalModule
         SciGlassMat->AddElement(EleGd, nAtoms = 88);
         SciGlassMat->AddElement(EleCe, nAtoms = 1);
         SciGlassMat->AddElement(EleGe, nAtoms = 5);
-        SciGlassMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+        SciGlassMat->GetIonisation()->SetBirksConstant(0.1 * mm / MeV);
         MaterialStore.push_back(SciGlassMat); // 17
 
         // Print material table
@@ -476,6 +479,14 @@ namespace SimCalModule
             G4int HcalCellMaxCount = pow(10, HcalCellMax.length());
             G4int HcalCopyNum = 0;
             Zpos -= HcalUnitSizeZ / 2.;    // Additional cover
+
+            Zpos += HcaltriggerThick;
+            auto HCALtriggerSolid = new G4Box("HCALtriggerSolid", HcalXYsize / 2., HcalXYsize / 2., HcaltriggerThick / 2.);
+            auto HCALtriggerLogical = new G4LogicalVolume(HCALtriggerSolid, GetCaloMaterial(HcaltriggerIndex), "HCALtriggerLogical");
+            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
+
+            Zpos += HcaltriggerThick + 1500. * mm;
+
             G4double HCALCoverThick = 2. * mm;
             Zpos += HCALCoverThick / 2.;
             auto HCALCoverSolid = new G4Box("HCALCoverSolid", HcalXYsize / 2., HcalXYsize / 2., HCALCoverThick / 2.);
@@ -501,10 +512,11 @@ namespace SimCalModule
 
 
                 Zpos += (HcalPCBThick + HcalPCB_Cu_Thick) / 2.;
-                new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCB_Cu_Logical, "HcalPCB_Cu_Physical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+				if(HcalPCB_Cu_Thick>0)
+					new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCB_Cu_Logical, "HcalPCB_Cu_Physical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
 
 
-                Zpos += (HcalPCBThick + HcalAbsorberThick) / 2. + HcalPCB_Abs_gap * mm;  // HcalPCBGap 4 mm
+                Zpos += (HcalPCB_Cu_Thick + HcalAbsorberThick) / 2. + HcalPCB_Abs_gap * mm;  // HcalPCBGap 4 mm
                 if (HcalAbsorberThick > 0)
                     new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalAbsLogical, "HcalAbsPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
                 Zpos += (HcalAbsorberThick + HcalUnitSizeZ) / 2.;
@@ -557,7 +569,8 @@ namespace SimCalModule
             HcalAbsLogical->SetVisAttributes(AbsVisAtt);
         HcalAbsLogical->SetVisAttributes(AbsVisAtt);
         AbsVisAtt =new G4VisAttributes(G4Colour(0.9,0,0));
-        HcalPCB_Cu_Logical->SetVisAttributes(AbsVisAtt);
+		if(HcalPCB_Cu_Thick > 0)
+			HcalPCB_Cu_Logical->SetVisAttributes(AbsVisAtt);
         AbsVisAtt =new G4VisAttributes(G4Colour(0,0.9,0));
         HcalPCBLogical->SetVisAttributes(AbsVisAtt);
         World_Logical->SetVisAttributes(G4VisAttributes::GetInvisible());

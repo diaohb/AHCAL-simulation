@@ -1,12 +1,14 @@
-void BeamDataStructure(TString InputDir, TString OutputDir, TString InputFileName, Int_t ECALOption)
+#include "Global.h"
+void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
 {
-    if (gSystem->AccessPathName(InputDir + "/" + InputFileName))
-    {
-        std::cout << "Error! ROOT file: " << InputDir + "/" + InputFileName << " does not exist." << std::endl;
-        return;
-    }
+    // if (gSystem->AccessPathName(InputDir + "/" + InputFileName))
+    // {
+    //     std::cout << "Error! ROOT file: " << InputDir + "/" + InputFileName << " does not exist." << std::endl;
+    //     return;
+    // }
     //------------------------------------------------------
     Int_t EventNum;
+	double total_Energy=0;
     std::vector<Int_t> DetectorID;
     std::vector<Int_t> CellID;
     std::vector<Double_t> Hit_Energy;
@@ -14,17 +16,18 @@ void BeamDataStructure(TString InputDir, TString OutputDir, TString InputFileNam
     std::vector<Double_t> Hit_X;
     std::vector<Double_t> Hit_Y;
     std::vector<Double_t> Hit_Z;
-    TString OutputFileName = "MC_" + InputFileName;
-    if (!gSystem->AccessPathName(OutputDir + "/" + OutputFileName))
-    {
-        std::cout << "The MC file already exists. Skipped..." << std::endl;
-        return;
-    }
-    TFile *ConvertFile = TFile::Open(OutputDir + "/" + OutputFileName, "RECREATE");
+    // TString OutputFileName = "MC_" + InputFileName;
+    // if (!gSystem->AccessPathName(OutputDir + "/" + OutputFileName))
+    // {
+        // std::cout << "The MC file already exists. Skipped..." << std::endl;
+        // return;
+    // }
+    TFile *ConvertFile = TFile::Open(OutputFile, "RECREATE");
     TTree *EventTree = new TTree("EventTree", "Info stored at event level");
     EventTree->Branch("EventNum", &EventNum, "EventNum/I");
     EventTree->Branch("DetectorID", &DetectorID);
     EventTree->Branch("CellID", &CellID);
+    EventTree->Branch("Energy_HCAL", &total_Energy);
     EventTree->Branch("Hit_Energy", &Hit_Energy);
     EventTree->Branch("Hit_Time", &Hit_Time);
     EventTree->Branch("Hit_X", &Hit_X);
@@ -53,7 +56,7 @@ void BeamDataStructure(TString InputDir, TString OutputDir, TString InputFileNam
     std::vector<Double_t>* vecHcalVisibleEdepCell = nullptr;
     std::vector<Double_t>* vecHcalHitTimeCell = nullptr;
     std::vector<Double_t>* vecHcalToaCell = nullptr;
-    TFile *DataFile = TFile::Open(InputDir + "/" + InputFileName);
+    TFile *DataFile = TFile::Open(InputFile);
     TTree *treeEvt = nullptr;
     DataFile->GetObject("treeEvt",treeEvt);
     treeEvt->SetBranchAddress("EvtID", &EvtID);
@@ -80,6 +83,15 @@ void BeamDataStructure(TString InputDir, TString OutputDir, TString InputFileNam
     Int_t NEvent = treeEvt->GetEntries();
     for (Int_t i = 0; i < NEvent; i++)
     {
+        DetectorID.clear();
+        CellID.clear();
+        Hit_Energy.clear();
+        Hit_Time.clear();
+        Hit_X.clear();
+        Hit_Y.clear();
+        Hit_Z.clear();
+		total_Energy=0;
+        if(i%10000==0)cout<<i<<"  /"<<NEvent<<endl;
         treeEvt->GetEntry(i);
         EventNum = i;
         if (ECALOption == 1)
@@ -119,29 +131,25 @@ void BeamDataStructure(TString InputDir, TString OutputDir, TString InputFileNam
             Int_t MemoID = 0;
             Int_t ChannelID = (ID_X - 1) % 6 + (ID_Y - 1) % 6 * 6;
             DetectorID.push_back(1);
-            CellID.push_back((ID_Z - 1 + 40) * 1e5 + ChipID * 1e4 + MemoID * 1e2 + ChannelID);
-            Hit_Energy.push_back(vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it)));
+			double tmp_energy=vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it));
+            // Hit_Energy.push_back(vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it)));
+			Hit_Energy.push_back(tmp_energy);
             Hit_Time.push_back(vecHcalToaCell->at(std::distance(vecHcalCellID->begin(), it)));
-            Hit_X.push_back(40.13 * (9 - 0.5 - ID_X + 1));
-            Hit_Y.push_back(40.13 * (9 - 0.5 - ID_Y + 1));
+            Hit_X.push_back(40.3 * (9 - 0.5 - ID_X + 1));
+            Hit_Y.push_back(40.3 * (9 - 0.5 - ID_Y + 1));
+			inverse(40.3 * (9 - 0.5 - ID_X + 1),40.3 * (9 - 0.5 - ID_Y + 1),ChipID,ChannelID);
+            CellID.push_back((ID_Z - 1) * 1e5 + ChipID * 1e4 + MemoID * 1e2 + ChannelID);
             if (ECALOption == 1 )
                 Hit_Z.push_back((ID_Z - 1) * 30. + 230 + 19.9 * 16 + 1.75 + 2. - 1.25); // 1.75 for 1/2 HCAL PS, 2 for HCAL cover, 1.25 for 1/2 ECAL PS
             else
                 Hit_Z.push_back((ID_Z - 1) * 30.);
         }
         EventTree->Fill();
-        DetectorID.clear();
-        CellID.clear();
-        Hit_Energy.clear();
-        Hit_Time.clear();
-        Hit_X.clear();
-        Hit_Y.clear();
-        Hit_Z.clear();
     }
+    delete treeEvt;
+    DataFile->Close();
     ConvertFile->cd();
     EventTree->Write();
     delete EventTree;
     ConvertFile->Close();
-    delete treeEvt;
-    DataFile->Close();
 }
