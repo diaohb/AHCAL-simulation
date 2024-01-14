@@ -1,0 +1,14 @@
+/control/verbose 2
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+
+/run/initialize
+
+/gun/particle e-
+
+/gun/position 1 1 -1000 mm
+/cal/gun/BeamSpreadSigma 10 mm
+
+/gun/momentumAmp 100 GeV
+/run/beamOn 1
