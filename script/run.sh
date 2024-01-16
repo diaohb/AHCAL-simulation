@@ -1,5 +1,5 @@
 #!/bin/bash
-Time=0112_25000126_1010_trigger60
+Time=0115_25000126_1010_trigger10
 Dir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal/run/${Time}/
 pedestal=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/pedestal.root
 dac=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/dac_v2.root

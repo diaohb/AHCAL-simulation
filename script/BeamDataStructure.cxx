@@ -132,6 +132,7 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
             Int_t ChannelID = (ID_X - 1) % 6 + (ID_Y - 1) % 6 * 6;
             DetectorID.push_back(1);
 			double tmp_energy=vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it));
+			// double tmp_energy=vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it));
             // Hit_Energy.push_back(vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it)));
 			Hit_Energy.push_back(tmp_energy);
             Hit_Time.push_back(vecHcalToaCell->at(std::distance(vecHcalCellID->begin(), it)));

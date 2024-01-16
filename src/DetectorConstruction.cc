@@ -82,7 +82,7 @@ namespace SimCalModule
         EcalAbsorberThick = 3.2 * mm; // 3.2 mm for ScW ECAL
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
-        HcaltriggerThick = 60.0 * mm;
+        HcaltriggerThick = 10.0 * mm;
         HcaltriggerIndex = PlasticSciHCAL;
         HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
         HcalPCB_Cu_Thick = 0.0 * mm; //2.5mm *1/5
@@ -217,7 +217,7 @@ namespace SimCalModule
         MaterialStore.push_back(BGOMat); // 14
 
         G4Material *PlasticSciHCALMat = nistManager->BuildMaterialWithNewDensity("polystyrene", "G4_POLYSTYRENE", 1.032 * g / cm3);
-        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.0 * mm / MeV);
         MaterialStore.push_back(PlasticSciHCALMat); // 15
 
         G4Material *PlasticSciECALMat = nistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");

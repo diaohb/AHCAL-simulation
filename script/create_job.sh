@@ -1,6 +1,6 @@
 #!/bin/bash
 # source /afs/ihep.ac.cn/users/q/qibh/setup_HTCondor.sh
-Time=0112_25000126_1010_trigger60
+Time=0115_25000126_1010_trigger10
 Project=SimCalModule
 MyDir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal
 rundir=${MyDir}/run/${Time}/
