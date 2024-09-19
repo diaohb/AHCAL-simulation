@@ -61,32 +61,27 @@ namespace SimCalModule
         EcalUnitParameter.SensitiveMatIndex = PlasticSciECAL;
         EcalUnitParameter.PassiveMatIndex = ESR;
         EcalUnitParameter.AttachMatIndex = Quartz;
-        
+
         HcalUnitParameter.ifDoubleSidedReadout = false;
         HcalUnitParameter.SensitiveLength = 3.0 * mm;
         HcalUnitParameter.SensitiveX = 40.0 * mm;
         HcalUnitParameter.SensitiveY = HcalUnitParameter.SensitiveX;
         HcalUnitParameter.PassiveSideThick = 0.065 * mm;
         HcalUnitParameter.PassiveCoverThick = 0.065 * mm;
-        HcalUnitParameter.House_X = 40.3 * mm;
-        HcalUnitParameter.House_Y = HcalUnitParameter.House_X;
-        HcalUnitParameter.House_Z = 3.5 * mm;
         HcalUnitParameter.AttachThick = 0 * mm;
         HcalUnitParameter.Sensitive_dig_out_X = 5.5 * mm;
         HcalUnitParameter.Sensitive_dig_out_Y = HcalUnitParameter.Sensitive_dig_out_X;
         HcalUnitParameter.Sensitive_dig_out_Z = 1.1 * mm;
         HcalUnitParameter.SensitiveMatIndex = PlasticSciHCAL;
-        HcalUnitParameter.Sensitive_dig_out_MatIndex = Air;
+        HcalUnitParameter.Sensitive_dig_out_MatIndex = SiPM;
         HcalUnitParameter.PassiveMatIndex = ESR;
         HcalUnitParameter.AttachMatIndex = Quartz;
         EcalAbsorberThick = 3.2 * mm; // 3.2 mm for ScW ECAL
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
-        HcaltriggerThick = 60.0 * mm;
-        HcaltriggerIndex = PlasticSciHCAL;
-        HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
-        HcalPCB_Cu_Thick = 0.0 * mm; //2.5mm *1/5
-        HcalPCB_Abs_gap = 4.0 * mm; //4mm-1mm
+        HcalPCBThick = 3.0 * mm;  //2.5mm *4/5 for PCB, 1mm for component
+        HcalPCB_Cu_Thick = 0.5 * mm; //2.5mm *1/5
+        HcalPCB_Abs_gap = 3.5 * mm; //4mm-1mm+0.5mm
         UpstreamSizeX = 0 * mm;
         UpstreamSizeY = 0 * mm;
         UpstreamSizeZ = 0 * mm;
@@ -104,9 +99,9 @@ namespace SimCalModule
         EcalCellNumberX = 5;
         EcalCellNumberY = 42;
         EcalLayerNumber = 32;
-        HcalCellNumberX = 18;
-        HcalCellNumberY = 18;
-        HcalLayerNumber = 40;
+        HcalCellNumberX = 1;
+        HcalCellNumberY = 1;
+        HcalLayerNumber = 1;
         EcalModuleType = 0; // 0:Off; 1:Cube; 2:Crossed bar; 3:ScW ECAL
         HcalModuleType = 1; // 0:Off; 1:AHCAL; 2:GSHCAL
         EcalStepTimeLimit = 150.0 * ns;
@@ -185,17 +180,17 @@ namespace SimCalModule
         EpoxyMat->AddElement(EleO, nAtoms = 3);
         MaterialStore.push_back(EpoxyMat); // 10
 
-		G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-		FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
-		FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
+        // G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
+        // FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
+        // FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
         
         //PCB:Cu=4:1, frac of V, thick=2.5mm
         // components_thick=3mm/3=1mm, mat=FR4
         //total FR4:Cu=3mm:0.5mm, density=(3*1.86+0.5*8.9)/(3+0.5)=2.86
 
-        // G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-        // FR4Mat->AddMaterial(QuartzMat, fracMass = 50 * perCent);
-        // FR4Mat->AddMaterial(EpoxyMat, fracMass = 50 * perCent);
+        G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
+        FR4Mat->AddMaterial(QuartzMat, fracMass = 50 * perCent);
+        FR4Mat->AddMaterial(EpoxyMat, fracMass = 50 * perCent);
         // FR4Mat->AddMaterial(CuMat, fracMass = 44.4 * perCent);
         MaterialStore.push_back(FR4Mat); // 11
 
@@ -207,6 +202,7 @@ namespace SimCalModule
         ESRMat->AddElement(EleH, nAtoms = 8);
         ESRMat->AddElement(EleO, nAtoms = 4);
         MaterialStore.push_back(ESRMat); // 12
+        G4MaterialPropertiesTable *myMPT2 = new G4MaterialPropertiesTable();
 
         G4Material *PWOMat = nistManager->FindOrBuildMaterial("G4_PbWO4");
         PWOMat->GetIonisation()->SetBirksConstant(0.0333333 * mm / MeV);
@@ -217,8 +213,32 @@ namespace SimCalModule
         MaterialStore.push_back(BGOMat); // 14
 
         G4Material *PlasticSciHCALMat = nistManager->BuildMaterialWithNewDensity("polystyrene", "G4_POLYSTYRENE", 1.032 * g / cm3);
-        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
+        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.07943 * mm / MeV);
         MaterialStore.push_back(PlasticSciHCALMat); // 15
+
+        G4MaterialPropertiesTable* myMPT1 = new G4MaterialPropertiesTable();
+        std::vector<double> photonEnergy = {2 * eV, 3 * eV};
+        std::vector<double> refractiveIndex = {1.58, 1.58};
+        std::vector<double> absorb = {210*cm, 210*cm};
+        myMPT1->AddProperty("RINDEX", photonEnergy, refractiveIndex);
+        myMPT1->AddProperty("ABSLENGTH", photonEnergy, absorb,false,true);
+        // Check that group velocity is calculated from RINDEX
+        if (myMPT1->GetProperty("RINDEX")->GetVectorLength() !=
+            myMPT1->GetProperty("GROUPVEL")->GetVectorLength())
+        {
+            G4ExceptionDescription ed;
+            ed << "Error calculating group velocities. Incorrect number of entries "
+                  "in group velocity material property vector.";
+            G4Exception("OpNovice::OpNoviceDetectorConstruction", "OpNovice001",
+                        FatalException, ed);
+        }
+        myMPT1->AddConstProperty("SCINTILLATIONYIELD", 10000. / MeV);
+        myMPT1->AddConstProperty("SCINTILLATIONRISETIME1", 0.9 * ns);
+        myMPT1->AddConstProperty("SSCINTILLATIONTIMECONSTANT1", 2.1 * ns);
+        // myMPT1->AddConstProperty("REFRACTIVE", 1.58);
+
+        myMPT1->DumpTable();
+        PlasticSciHCALMat->SetMaterialPropertiesTable(myMPT1);
 
         G4Material *PlasticSciECALMat = nistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
         PlasticSciECALMat->GetIonisation()->SetBirksConstant(0.07943 * mm / MeV);
@@ -232,8 +252,11 @@ namespace SimCalModule
         SciGlassMat->AddElement(EleGd, nAtoms = 88);
         SciGlassMat->AddElement(EleCe, nAtoms = 1);
         SciGlassMat->AddElement(EleGe, nAtoms = 5);
-        SciGlassMat->GetIonisation()->SetBirksConstant(0.1 * mm / MeV);
+        SciGlassMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
         MaterialStore.push_back(SciGlassMat); // 17
+
+        G4Material *SiPMMat = nistManager->FindOrBuildMaterial("G4_AIR");
+        MaterialStore.push_back(SiPMMat); // 18
 
         // Print material table
         G4cout << *(G4Material::GetMaterialTable()) << G4endl;
@@ -253,326 +276,68 @@ namespace SimCalModule
         G4LogicalVolume *World_Logical = new G4LogicalVolume(World_Solid, GetCaloMaterial(WorldMatIndex), "World_Logical");
         G4VPhysicalVolume *World_Physical = new G4PVPlacement(0, G4ThreeVector(), World_Logical, "World_Physical", 0, false, 0, ifcheckOverlaps);
 
-        // Upstream
-        G4Box *UpstreamSolid = nullptr;
-        G4LogicalVolume *UpstreamLogical = nullptr;
-        if (UpstreamSizeX * UpstreamSizeY * UpstreamSizeZ > 0)
-        {
-            UpstreamSolid = new G4Box("UpstreamSolid", UpstreamSizeX / 2., UpstreamSizeY / 2., UpstreamSizeZ / 2.);
-            UpstreamLogical = new G4LogicalVolume(UpstreamSolid, GetCaloMaterial(UpstreamMatIndex), "UpstreamLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, -UpstreamSizeZ / 2. - 50. * mm), UpstreamLogical, "UpstreamPhysical", World_Logical, false, 0, ifcheckOverlaps);
-        }
-
-        // ECAL
-        G4double EcalUnitSizeX = EcalUnitParameter.SensitiveX + 2. * EcalUnitParameter.PassiveSideThick;
-        G4double EcalUnitSizeY = EcalUnitParameter.SensitiveY + 2. * EcalUnitParameter.PassiveSideThick;
-        G4double EcalUnitSizeZ = EcalUnitParameter.SensitiveLength + 2. * EcalUnitParameter.PassiveCoverThick + ((G4int)(EcalUnitParameter.ifDoubleSidedReadout) + 1) * EcalUnitParameter.AttachThick;
-        G4Box *EcalAbsSolid = nullptr;
-        G4LogicalVolume *EcalAbsLogical = nullptr;
-        G4Box *EcalPCBSolid = nullptr;
-        G4LogicalVolume *EcalPCBLogical = nullptr;
-        G4double EcalXYsize = std::max(EcalCellNumberX * EcalUnitSizeX, EcalCellNumberY * EcalUnitSizeY);
-        if (EcalModuleType > 0)
-        {
-            if (EcalAbsorberThick > 0)
-            {
-                EcalAbsSolid = new G4Box("EcalAbsSolid", EcalXYsize / 2., EcalXYsize / 2., EcalAbsorberThick / 2.);
-                EcalAbsLogical = new G4LogicalVolume(EcalAbsSolid, GetCaloMaterial(EcalAbsorberMatIndex), "EcalAbsLogical");
-            }
-            if (EcalPCBThick > 0)
-            {
-                EcalPCBSolid = new G4Box("EcalPCBSolid", EcalXYsize / 2., EcalXYsize / 2., EcalPCBThick / 2.);
-                EcalPCBLogical = new G4LogicalVolume(EcalPCBSolid, GetCaloMaterial(EcalPCBMatIndex), "EcalPCBLogical");
-            }
-        }
-        if (EcalModuleType == 1)
-        {
-            G4RotationMatrix *EcalUnitInv = new G4RotationMatrix();
-            EcalUnitInv->rotateY(180. * deg);
-            G4double Zpos = EcalUnitSizeZ / 2.;
-            auto EcalCellMax = std::to_string(std::max(EcalCellNumberX, EcalCellNumberY));
-            G4int EcalCellMaxCount = pow(10, EcalCellMax.length());
-            G4int EcalCopyNum = 0;
-            for (G4int z = 0; z < EcalLayerNumber; z++)
-            {
-                for (G4int y = 0; y < EcalCellNumberY; y++)
-                {
-                    EcalCopyNum = (z + 1) * EcalCellMaxCount * EcalCellMaxCount + (y + 1) * EcalCellMaxCount;
-                    for (G4int x = 0; x < EcalCellNumberX; x++)
-                    {
-                        EcalCopyNum++;
-                        new CaloUnitVolume("EcalUnit", EcalUnitInv, G4ThreeVector(EcalUnitSizeX * (EcalCellNumberX / 2. - 0.5 - x), EcalUnitSizeY * (EcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                           ifcheckOverlaps, World_Logical, EcalUnitLogical, EcalSensitiveLogical, &EcalUnitParameter, false, EcalCopyNum, this);
-                    }
-                }
-                Zpos += (EcalUnitSizeZ + EcalPCBThick) / 2.;
-                if (EcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalPCBLogical, "EcalPCBPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount / EcalCellMaxCount * EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (EcalPCBThick + EcalAbsorberThick) / 2.;
-                if (EcalAbsorberThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalAbsLogical, "EcalAbsPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount / EcalCellMaxCount * EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (EcalAbsorberThick + EcalUnitSizeZ) / 2.;
-            }
-        }
-        else if (EcalModuleType == 2)
-        {
-            EcalUnitSizeY = EcalUnitParameter.SensitiveY + 2. * EcalUnitParameter.PassiveSideThick;
-            EcalUnitSizeZ = EcalUnitSizeX;
-            G4RotationMatrix *EcalUnitRMHorizontal = new G4RotationMatrix();
-            EcalUnitRMHorizontal->rotateY(90. * deg);
-            G4RotationMatrix *EcalUnitRMVertical = new G4RotationMatrix();
-            EcalUnitRMVertical->rotateZ(90. * deg);
-            EcalUnitRMVertical->rotateY(-90. * deg);
-            G4double Zpos = EcalUnitSizeZ / 2.;
-            auto EcalCellMax = std::to_string(std::max(EcalCellNumberX, EcalCellNumberY));
-            G4int EcalCellMaxCount = pow(10, EcalCellMax.length());
-            G4int EcalCopyNum = 0;
-            for (G4int z = 0; z < EcalLayerNumber; z++)
-            {
-                EcalCopyNum = (z + 1) * EcalCellMaxCount;
-                if (z % 2 == 0)
-                    for (G4int y = 0; y < EcalCellNumberY; y++)
-                    {
-                        EcalCopyNum++;
-                        new CaloUnitVolume("EcalUnit", EcalUnitRMHorizontal, G4ThreeVector(0, EcalUnitSizeY * (EcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                           ifcheckOverlaps, World_Logical, EcalUnitLogical, EcalSensitiveLogical, &EcalUnitParameter, false, EcalCopyNum, this);
-                    }
-                else
-                    for (G4int x = 0; x < EcalCellNumberX; x++)
-                    {
-                        EcalCopyNum++;
-                        new CaloUnitVolume("EcalUnit", EcalUnitRMVertical, G4ThreeVector(EcalUnitSizeY * (EcalCellNumberX / 2. - 0.5 - x), 0, Zpos),
-                                           ifcheckOverlaps, World_Logical, EcalUnitLogical, EcalSensitiveLogical, &EcalUnitParameter, false, EcalCopyNum, this);
-                    }
-                Zpos += (EcalUnitSizeZ + EcalPCBThick) / 2.;
-                if (EcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalPCBLogical, "EcalPCBPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (EcalPCBThick + EcalAbsorberThick) / 2.;
-                if (EcalAbsorberThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalAbsLogical, "EcalAbsPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (EcalAbsorberThick + EcalUnitSizeZ) / 2.;
-            }
-        }
-        else if (EcalModuleType == 3)
-        {
-            EcalUnitSizeX = EcalUnitParameter.SensitiveX + 2. * EcalUnitParameter.PassiveSideThick;
-            EcalUnitSizeY = EcalUnitParameter.SensitiveY + 2. * EcalUnitParameter.PassiveSideThick;
-            EcalUnitSizeZ = EcalUnitParameter.SensitiveLength + 2. * EcalUnitParameter.PassiveCoverThick + ((G4int)(EcalUnitParameter.ifDoubleSidedReadout) + 1) * EcalUnitParameter.AttachThick;
-            G4RotationMatrix *EcalUnitRM = new G4RotationMatrix();
-            EcalUnitRM->rotateZ(90. * deg);
-            G4double ECALCoverThick = 1. * mm;  // Additional cover
-            G4double Zpos = ECALCoverThick / 2.;
-            auto ECALCoverSolid = new G4Box("ECALCoverSolid", EcalXYsize / 2., EcalXYsize / 2., ECALCoverThick / 2.);
-            auto ECALCoverLogical = new G4LogicalVolume(ECALCoverSolid, GetCaloMaterial(Al), "ECALCoverLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), ECALCoverLogical, "ECALCoverPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
-            Zpos += 2. * mm;
-            Zpos += (ECALCoverThick + EcalUnitSizeZ) / 2.;
-            auto EcalCellMax = std::to_string(std::max(EcalCellNumberX, EcalCellNumberY));
-            G4int EcalCellMaxCount = pow(10, EcalCellMax.length());
-            G4int EcalCopyNum = 0;
-            for (G4int z = 0; z < EcalLayerNumber; z++)
-            {
-                if (z % 2 == 0)
-                {
-                    for (G4int y = 0; y < EcalCellNumberY; y++)
-                    {
-                        EcalCopyNum = (z + 1) * EcalCellMaxCount * EcalCellMaxCount + (y + 1) * EcalCellMaxCount;
-                        for (G4int x = 0; x < EcalCellNumberX; x++)
-                        {
-                            EcalCopyNum++;
-                            new CaloUnitVolume("EcalUnit", 0, G4ThreeVector(EcalUnitSizeX * (EcalCellNumberX / 2. - 0.5 - x), EcalUnitSizeY * (EcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                               ifcheckOverlaps, World_Logical, EcalUnitLogical, EcalSensitiveLogical, &EcalUnitParameter, false, EcalCopyNum, this);
-                        }
-                    }
-                    Zpos += (EcalUnitSizeZ + EcalPCBThick) / 2.;
-                    if (EcalPCBThick > 0)
-                        new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalPCBLogical, "EcalPCBPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                    Zpos += 0.75 * mm;
-                    Zpos += (EcalPCBThick + EcalAbsorberThick) / 2.;
-                    if (EcalAbsorberThick > 0)
-                        new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalAbsLogical, "EcalAbsPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                    Zpos += (EcalAbsorberThick + EcalPCBThick) / 2.;
-                    Zpos += 0.75 * mm;
-                }
-                else
-                {
-                    if (EcalPCBThick > 0)
-                        new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalPCBLogical, "EcalPCBPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                    Zpos += (EcalUnitSizeZ + EcalPCBThick) / 2.;
-                    for (G4int y = 0; y < EcalCellNumberX; y++)
-                    {
-                        EcalCopyNum = (z + 1) * EcalCellMaxCount * EcalCellMaxCount + (y + 1) * EcalCellMaxCount;
-                        for (G4int x = 0; x < EcalCellNumberY; x++)
-                        {
-                            EcalCopyNum++;
-                            new CaloUnitVolume("EcalUnit", EcalUnitRM, G4ThreeVector(EcalUnitSizeY * (EcalCellNumberY / 2. - 0.5 - x), EcalUnitSizeX * (EcalCellNumberX / 2. - 0.5 - y), Zpos),
-                                               ifcheckOverlaps, World_Logical, EcalUnitLogical, EcalSensitiveLogical, &EcalUnitParameter, false, EcalCopyNum, this);
-                        }
-                    }
-                    Zpos += 1.5 * mm;
-                    Zpos += (EcalUnitSizeZ + EcalAbsorberThick) / 2.;
-                    if (EcalAbsorberThick > 0)
-                        new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), EcalAbsLogical, "EcalAbsPhysical", World_Logical, false, EcalCopyNum / EcalCellMaxCount * EcalCellMaxCount, ifcheckOverlaps);
-                    Zpos += (EcalAbsorberThick + EcalUnitSizeZ) / 2.;
-                    Zpos += 1.5 * mm;
-                }
-            }
-            Zpos -= EcalPCBThick / 2.;
-            Zpos -= 0.75 * mm;
-            Zpos += 2. * mm;
-            Zpos += ECALCoverThick / 2.;
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), ECALCoverLogical, "ECALCoverPhysicalBack", World_Logical, false, 0, ifcheckOverlaps);
-        }
-
-        // Intermediate
-        G4Box *IntermediateSolid = nullptr;
-        G4LogicalVolume *IntermediateLogical = nullptr;
-        if (IntermediateSizeX * IntermediateSizeY * IntermediateSizeZ > 0)
-        {
-            IntermediateSolid = new G4Box("IntermediateSolid", IntermediateSizeX / 2., IntermediateSizeY / 2., IntermediateSizeZ / 2.);
-            IntermediateLogical = new G4LogicalVolume(IntermediateSolid, GetCaloMaterial(IntermediateMatIndex), "IntermediateLogical");
-            G4double Zpos = IntermediateSizeZ / 2.;
-            if (EcalModuleType > 0)
-                Zpos += (EcalUnitSizeZ + EcalPCBThick + EcalAbsorberThick) * EcalLayerNumber;
-            new G4PVPlacement(0, G4ThreeVector(0, 0, EcalUnitSizeZ * EcalLayerNumber + IntermediateSizeZ / 2.), IntermediateLogical, "IntermediatePhysical", World_Logical, false, 0, ifcheckOverlaps);
-        }
-
         // HCAL
-        G4double HcalUnitSizeX = HcalUnitParameter.House_X;//HcalUnitParameter.SensitiveX + 2. * HcalUnitParameter.PassiveSideThick;
-        G4double HcalUnitSizeY = HcalUnitParameter.House_X;//HcalUnitParameter.SensitiveY + 2. * HcalUnitParameter.PassiveSideThick;
+        G4double HcalUnitSizeX = HcalUnitParameter.SensitiveX + 2. * HcalUnitParameter.PassiveSideThick;
+        G4double HcalUnitSizeY = HcalUnitParameter.SensitiveY + 2. * HcalUnitParameter.PassiveSideThick;
         G4double HcalUnitSizeZ = HcalUnitParameter.SensitiveLength + 2. * HcalUnitParameter.PassiveCoverThick + ((G4int)(HcalUnitParameter.ifDoubleSidedReadout) + 1) * HcalUnitParameter.AttachThick;
-        G4Box *HcalAbsSolid = nullptr;
-        G4LogicalVolume *HcalAbsLogical = nullptr;
-        G4Box *HcalPCBSolid = nullptr;
-        G4LogicalVolume *HcalPCBLogical = nullptr;
-        G4Box *HcalPCB_Cu_Solid = nullptr;
-        G4LogicalVolume *HcalPCB_Cu_Logical = nullptr;
-        G4double HcalXYsize = std::max(HcalCellNumberX * HcalUnitSizeX, HcalCellNumberY * HcalUnitSizeY);
-        if (HcalModuleType > 0)
-        {
-            if (HcalAbsorberThick > 0)
-            {
-                HcalAbsSolid = new G4Box("HcalAbsSolid", HcalXYsize / 2., HcalXYsize / 2., HcalAbsorberThick / 2.);
-                HcalAbsLogical = new G4LogicalVolume(HcalAbsSolid, GetCaloMaterial(HcalAbsorberMatIndex), "HcalAbsLogical");
-            }
-            if (HcalPCBThick > 0)
-            {
-                HcalPCBSolid = new G4Box("HcalPCBSolid", HcalXYsize / 2., HcalXYsize / 2., HcalPCBThick / 2.);
-                HcalPCBLogical = new G4LogicalVolume(HcalPCBSolid, GetCaloMaterial(HcalPCBMatIndex), "HcalPCBLogical");
-            }
-            if (HcalPCB_Cu_Thick > 0)
-            {
-                HcalPCB_Cu_Solid = new G4Box("HcalPCB_Cu_Solid", HcalXYsize / 2., HcalXYsize / 2., HcalPCB_Cu_Thick / 2.);
-                HcalPCB_Cu_Logical = new G4LogicalVolume(HcalPCB_Cu_Solid, GetCaloMaterial(HcalPCB_Cu_MatIndex), "HcalPCB_Cu_Logical");
-            }
-        }
-        if (HcalModuleType == 1)
-        {
-            G4RotationMatrix *HcalUnitInv = new G4RotationMatrix();
-            HcalUnitInv->rotateY(180. * deg);
-            G4double Zpos = HcalUnitSizeZ / 2.;
-            if (EcalModuleType > 0)
-                Zpos += 19.9 * EcalLayerNumber / 2. + 230. * mm; // Additional 230 mm (assume including ECAL cover)
-            if (IntermediateSizeX * IntermediateSizeY * IntermediateSizeZ > 0)
-                Zpos += IntermediateSizeZ;
-            auto HcalCellMax = std::to_string(std::max(HcalCellNumberX, HcalCellNumberY));
-            G4int HcalCellMaxCount = pow(10, HcalCellMax.length());
-            G4int HcalCopyNum = 0;
-            Zpos -= HcalUnitSizeZ / 2.;    // Additional cover
 
-            Zpos += HcaltriggerThick;
-            auto HCALtriggerSolid = new G4Box("HCALtriggerSolid", HcalXYsize / 2., HcalXYsize / 2., HcaltriggerThick / 2.);
-            auto HCALtriggerLogical = new G4LogicalVolume(HCALtriggerSolid, GetCaloMaterial(HcaltriggerIndex), "HCALtriggerLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
+        G4RotationMatrix *HcalUnitInv = new G4RotationMatrix();
+        HcalUnitInv->rotateY(180. * deg);
+        // new CaloUnitVolume("HcalUnit", HcalUnitInv, G4ThreeVector(0, 0, 0),ifcheckOverlaps, World_Logical, HcalUnitLogical,HcalSensitiveLogical, &HcalUnitParameter, false, 0, this);
+        /////////////////////////////////////////////////////////////////////////////////
+            G4double Sensitive_x = HcalUnitParameter.SensitiveX / 2.;
+            G4double Sensitive_y = HcalUnitParameter.SensitiveY / 2.;
+            G4double Sensitive_z = HcalUnitParameter.SensitiveLength / 2.;
+            G4double Sensitive_dig_out_x = HcalUnitParameter.Sensitive_dig_out_X / 2.;
+            G4double Sensitive_dig_out_y = HcalUnitParameter.Sensitive_dig_out_Y / 2.;
+            G4double Sensitive_dig_out_z = HcalUnitParameter.Sensitive_dig_out_Z / 2.;
+            G4double Passive_x = Sensitive_x + HcalUnitParameter.PassiveSideThick;
+            G4double Passive_y = Sensitive_y + HcalUnitParameter.PassiveSideThick;
+            G4double Passive_z = Sensitive_z + HcalUnitParameter.PassiveCoverThick;
+            G4double Housing_x = Passive_x;
+            G4double Housing_y = Passive_y;
+            G4double Housing_z = Passive_z;
 
-            Zpos += HcaltriggerThick + 1500. * mm;
+            // Box for housing
+            G4Box *SolidHousing = new G4Box("SolidHousing", Housing_x, Housing_y, Housing_z);
+            G4LogicalVolume *HousingLogical = new G4LogicalVolume(SolidHousing, G4Material::GetMaterial("G4_Galactic"), "HousingLogical");
 
-            G4double HCALCoverThick = 2. * mm;
-            Zpos += HCALCoverThick / 2.;
-            auto HCALCoverSolid = new G4Box("HCALCoverSolid", HcalXYsize / 2., HcalXYsize / 2., HCALCoverThick / 2.);
-            auto HCALCoverLogical = new G4LogicalVolume(HCALCoverSolid, GetCaloMaterial(HcalAbsorberMatIndex), "HCALCoverLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALCoverLogical, "HCALCoverPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
-            Zpos += 2. * mm;
-            Zpos += (HCALCoverThick + HcalUnitSizeZ) / 2.;
-            for (G4int z = 0; z < HcalLayerNumber; z++)
-            {
-                for (G4int y = 0; y < HcalCellNumberY; y++)
-                {
-                    HcalCopyNum = (z + 1) * HcalCellMaxCount * HcalCellMaxCount + (y + 1) * HcalCellMaxCount;
-                    for (G4int x = 0; x < HcalCellNumberX; x++)
-                    {
-                        HcalCopyNum++;
-                        new CaloUnitVolume("HcalUnit", HcalUnitInv, G4ThreeVector(HcalUnitSizeX * (HcalCellNumberX / 2. - 0.5 - x), HcalUnitSizeY * (HcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                           ifcheckOverlaps, World_Logical, HcalUnitLogical, HcalSensitiveLogical, &HcalUnitParameter, false, HcalCopyNum, this);
-                    }
-                }
-                Zpos += (HcalUnitSizeZ + HcalPCBThick) / 2.;
-                if (HcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+            // Passive
+            G4Box *SolidPassive = new G4Box("SolidPassive", Passive_x, Passive_y, Passive_z);
+            G4LogicalVolume *PassiveLogical = new G4LogicalVolume(SolidPassive, GetCaloMaterial(HcalUnitParameter.PassiveMatIndex), "PassiveLogical");
+            G4VPhysicalVolume *Passive_phys = new G4PVPlacement(0, G4ThreeVector(0, 0, (G4int)(!HcalUnitParameter.ifDoubleSidedReadout) * HcalUnitParameter.AttachThick / 2.), PassiveLogical, "PassivePhysical", HousingLogical, false, 0, ifcheckOverlaps);
 
+            // Sensitive
+            G4Box *SolidSensitive = new G4Box("SolidSensitive", Sensitive_x, Sensitive_y, Sensitive_z);
+            G4LogicalVolume *SensitiveLogical = new G4LogicalVolume(SolidSensitive, GetCaloMaterial(HcalUnitParameter.SensitiveMatIndex), "SensitiveLogical");
+            G4VPhysicalVolume *Sensitive_phys = new G4PVPlacement(0, G4ThreeVector(), SensitiveLogical, "SensitivePhysical", PassiveLogical, false, 0, ifcheckOverlaps);
 
-                Zpos += (HcalPCBThick + HcalPCB_Cu_Thick) / 2.;
-				if(HcalPCB_Cu_Thick>0)
-					new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCB_Cu_Logical, "HcalPCB_Cu_Physical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+            // Sensitive_dig_out
+            G4Box *SolidSensitive_dig_out = new G4Box("SolidSensitive_dig_out", Sensitive_dig_out_x, Sensitive_dig_out_y, Sensitive_dig_out_z);
+            G4LogicalVolume *Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive_dig_out, GetCaloMaterial(HcalUnitParameter.Sensitive_dig_out_MatIndex), "Sensitive_dig_out_Logical");
+            G4VPhysicalVolume *Sensitive_dig_out_phys = new G4PVPlacement(0, G4ThreeVector(0, 0, -Sensitive_z + Sensitive_dig_out_z), Sensitive_dig_out_Logical, "Sensitive_dig_out_Physical", SensitiveLogical, false, 0, ifcheckOverlaps);
 
+            G4VisAttributes *HousingVisAtt = new G4VisAttributes(G4Colour(0.6, 0.6, 0.8));
+            HousingVisAtt->SetVisibility(false);
+            HousingLogical->SetVisAttributes(HousingVisAtt);
 
-                Zpos += (HcalPCB_Cu_Thick + HcalAbsorberThick) / 2. + HcalPCB_Abs_gap * mm;  // HcalPCBGap 4 mm
-                if (HcalAbsorberThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalAbsLogical, "HcalAbsPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (HcalAbsorberThick + HcalUnitSizeZ) / 2.;
-            }
-            Zpos -= HcalUnitSizeZ / 2.;
-            Zpos += 2. * mm;
-            Zpos += HCALCoverThick / 2.;
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALCoverLogical, "HCALCoverPhysicalBack", World_Logical, false, 0, ifcheckOverlaps);
-        }
-        else if (HcalModuleType == 2)
-        {
-            G4RotationMatrix *HcalUnitInv = new G4RotationMatrix();
-            HcalUnitInv->rotateY(180. * deg);
-            G4double Zpos = HcalUnitSizeZ / 2.;
-            if (EcalModuleType > 0)
-                Zpos += (EcalUnitSizeZ + EcalPCBThick + EcalAbsorberThick) * EcalLayerNumber;
-            if (IntermediateSizeX * IntermediateSizeY * IntermediateSizeZ > 0)
-                Zpos += IntermediateSizeZ;
-            auto HcalCellMax = std::to_string(std::max(HcalCellNumberX, HcalCellNumberY));
-            G4int HcalCellMaxCount = pow(10, HcalCellMax.length());
-            G4int HcalCopyNum = 0;
-            for (G4int z = 0; z < HcalLayerNumber; z++)
-            {
-                for (G4int y = 0; y < HcalCellNumberY; y++)
-                {
-                    HcalCopyNum = (z + 1) * HcalCellMaxCount * HcalCellMaxCount + (y + 1) * HcalCellMaxCount;
-                    for (G4int x = 0; x < HcalCellNumberX; x++)
-                    {
-                        HcalCopyNum++;
-                        new CaloUnitVolume("HcalUnit", HcalUnitInv, G4ThreeVector(HcalUnitSizeX * (HcalCellNumberX / 2. - 0.5 - x), HcalUnitSizeY * (HcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                           ifcheckOverlaps, World_Logical, HcalUnitLogical, HcalSensitiveLogical, &HcalUnitParameter, false, HcalCopyNum, this);
-                    }
-                }
-                Zpos += (HcalUnitSizeZ + HcalPCBThick) / 2.;
-                if (HcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (HcalPCBThick + HcalAbsorberThick) / 2.;  // HcalPCBGap 4 mm
-                if (HcalAbsorberThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalAbsLogical, "HcalAbsPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (HcalAbsorberThick + HcalUnitSizeZ) / 2.;
-            }
-        }
+            G4VisAttributes *PassiveVisAtt = new G4VisAttributes(G4Colour(0.6, 0.8, 1.0));
+            PassiveVisAtt->SetVisibility(true);
+            PassiveLogical->SetVisAttributes(PassiveVisAtt);
 
+            G4VisAttributes *SensitiveVisAtt = new G4VisAttributes(G4Colour(0.28, 0.82, 0.8));
+            SensitiveVisAtt->SetVisibility(true);
+            SensitiveLogical->SetVisAttributes(SensitiveVisAtt);
+
+            G4VisAttributes *Sensitive_dig_out_VisAtt = new G4VisAttributes(G4Colour(0.9, 0.9, 0.));
+            Sensitive_dig_out_VisAtt->SetVisibility(true);
+            Sensitive_dig_out_Logical->SetVisAttributes(Sensitive_dig_out_VisAtt);
+            SetCaloLogicalVolume(HcalSensitiveLogical, SensitiveLogical);
+            SetCaloLogicalVolume(HcalUnitLogical, HousingLogical);
+        /////////////////////////////////////////////////////////////////////////////////
         // Visualization attributes
         G4VisAttributes *AbsVisAtt = new G4VisAttributes(G4Colour(0.28, 0.82, 0.8, 0.3)); // Light Blue
         AbsVisAtt->SetVisibility(true);
-        if (EcalModuleType > 0 && EcalAbsorberThick > 0)
-            EcalAbsLogical->SetVisAttributes(AbsVisAtt);
-        if (HcalModuleType > 0 && HcalAbsorberThick > 0)
-            HcalAbsLogical->SetVisAttributes(AbsVisAtt);
-        HcalAbsLogical->SetVisAttributes(AbsVisAtt);
-        AbsVisAtt =new G4VisAttributes(G4Colour(0.9,0,0));
-		if(HcalPCB_Cu_Thick > 0)
-			HcalPCB_Cu_Logical->SetVisAttributes(AbsVisAtt);
-        AbsVisAtt =new G4VisAttributes(G4Colour(0,0.9,0));
-        HcalPCBLogical->SetVisAttributes(AbsVisAtt);
         World_Logical->SetVisAttributes(G4VisAttributes::GetInvisible());
 
         return World_Physical;
@@ -580,19 +345,6 @@ namespace SimCalModule
 
     void DetectorConstruction::ConstructSDandField()
     {
-        // ECAL SD
-        if (EcalSensitiveLogical != nullptr)
-        {
-            if (!fEcalUnitSD.Get())
-            {
-                G4cout << "Construction /CaloDet/EcalSD" << G4endl;
-                EcalUnitSD *ecalunitSD = new EcalUnitSD("/CaloDet/EcalSD");
-                fEcalUnitSD.Put(ecalunitSD);
-            }
-            G4SDManager::GetSDMpointer()->AddNewDetector(fEcalUnitSD.Get());
-            SetSensitiveDetector(EcalSensitiveLogical, fEcalUnitSD.Get());
-        }
-
         // HCAL SD
         if (HcalSensitiveLogical != nullptr)
         {

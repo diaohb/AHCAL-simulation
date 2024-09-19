@@ -1,4 +1,8 @@
 #include "Global.h"
+#include "TFile.h"
+#include "TTree.h"
+#include <iostream>
+using namespace std;
 void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
 {
     // if (gSystem->AccessPathName(InputDir + "/" + InputFileName))
@@ -132,7 +136,9 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
             Int_t ChannelID = (ID_X - 1) % 6 + (ID_Y - 1) % 6 * 6;
             DetectorID.push_back(1);
 			double tmp_energy=vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it));
+			// double tmp_energy=vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it));
             // Hit_Energy.push_back(vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it)));
+            total_Energy+=tmp_energy;
 			Hit_Energy.push_back(tmp_energy);
             Hit_Time.push_back(vecHcalToaCell->at(std::distance(vecHcalCellID->begin(), it)));
             Hit_X.push_back(40.3 * (9 - 0.5 - ID_X + 1));
@@ -146,10 +152,12 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
         }
         EventTree->Fill();
     }
+    cout << "fill done" << endl;
     delete treeEvt;
     DataFile->Close();
     ConvertFile->cd();
     EventTree->Write();
     delete EventTree;
     ConvertFile->Close();
+    cout << "transform done" << endl;
 }

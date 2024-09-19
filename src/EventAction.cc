@@ -49,37 +49,10 @@ namespace SimCalModule
     void EventAction::EndOfEventAction(const G4Event *anEvent)
     {
         G4HCofThisEvent *hitsCE = anEvent->GetHCofThisEvent();
-        EcalUnitHitsCollection *EcalUnitHC = nullptr;
         HcalUnitHitsCollection *HcalUnitHC = nullptr;
-        if (hitsCE && fEcalCollID >= 0)
-            EcalUnitHC = (EcalUnitHitsCollection *)(hitsCE->GetHC(fEcalCollID));
         if (hitsCE && fHcalCollID >= 0)
             HcalUnitHC = (HcalUnitHitsCollection *)(hitsCE->GetHC(fHcalCollID));
 
-        if (EcalUnitHC)
-        {
-            size_t n_hit = EcalUnitHC->entries();
-            G4double fEdepCell;
-            G4double fVisibleEdepCell;
-            for (size_t i = 0; i < n_hit; i++)
-            {
-                fEdepCell = (*EcalUnitHC)[i]->GetEdepCell() / MeV;
-                fVisibleEdepCell = (*EcalUnitHC)[i]->GetVisibleEdepCell() / MeV;
-                EcalEdepSum += fEdepCell;
-                EcalVisibleEdepSum += fVisibleEdepCell;
-                vecEcalCellID.push_back((*EcalUnitHC)[i]->GetCellID());
-                vecEcalStepsCell.push_back((*EcalUnitHC)[i]->GetStepsCell());
-                vecEcalEdepCell.push_back(fEdepCell);
-                vecEcalVisibleEdepCell.push_back(fVisibleEdepCell);
-                vecEcalHitTimeCell.push_back((*EcalUnitHC)[i]->GetTimeCell() / ns);
-                vecEcalToaCell.push_back((*EcalUnitHC)[i]->GetToaCell() / ns);
-            }
-            if (vecEcalEdepCell.size() > 0)
-            {
-                auto fMaxEnergy_it = std::max_element(vecEcalEdepCell.begin(), vecEcalEdepCell.end());
-                EcalMaxEdepCell = *fMaxEnergy_it;
-            }
-        }
 
         if (HcalUnitHC)
         {

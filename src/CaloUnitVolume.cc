@@ -1,4 +1,5 @@
 #include "CaloUnitVolume.hh"
+
 #include "G4Box.hh"
 #include "G4Orb.hh"
 #include "G4Colour.hh"
@@ -17,7 +18,7 @@
 
 namespace SimCalModule
 {
-    CaloUnitVolume::CaloUnitVolume(G4String CaloName, G4RotationMatrix *pRot, const G4ThreeVector &pPlace, G4bool pcheckOverlaps, G4LogicalVolume *pMotherLogical,
+    CaloUnitVolume::CaloUnitVolume(G4String CaloName, G4RotationMatrix *pRot, const G4ThreeVector &pPlace, G4bool pcheckOverlaps,  G4LogicalVolume *pMotherLogical,
                                    G4LogicalVolume *&pCaloUnitLogical, G4LogicalVolume *&pCaloSensitiveLogical, CaloUnitParameter *inputPara, G4bool pMany,
                                    G4int pCopyNo, DetectorConstruction *pConstructor)
         : G4PVPlacement(pRot, pPlace, new G4LogicalVolume(new G4Box("temp", 1., 1., 1.), G4Material::GetMaterial("G4_Galactic"), "temp", 0, 0, 0),
@@ -36,27 +37,13 @@ namespace SimCalModule
             G4double Passive_x = Sensitive_x + ThisUnitParameter->PassiveSideThick;
             G4double Passive_y = Sensitive_y + ThisUnitParameter->PassiveSideThick;
             G4double Passive_z = Sensitive_z + ThisUnitParameter->PassiveCoverThick;
-            G4double Housing_x = ThisUnitParameter->House_X/2.;
-            G4double Housing_y = ThisUnitParameter->House_Y/2.;
-            G4double Housing_z = ThisUnitParameter->House_Z/2.;//Passive_z + ((G4int)(ThisUnitParameter->ifDoubleSidedReadout) + 1) * ThisUnitParameter->AttachThick / 2.;
+            G4double Housing_x = Passive_x;
+            G4double Housing_y = Passive_y;
+            G4double Housing_z = Passive_z;
 
             // Box for housing
             G4Box *SolidHousing = new G4Box("SolidHousing", Housing_x, Housing_y, Housing_z);
             HousingLogical = new G4LogicalVolume(SolidHousing, G4Material::GetMaterial("G4_Galactic"), "HousingLogical");
-
-            // Attach
-            if (ThisUnitParameter->AttachThick > 0)
-            {
-                G4Box *SolidAttach = new G4Box("SolidAttach", Passive_x, Passive_y, ThisUnitParameter->AttachThick / 2.);
-                AttachLogical = new G4LogicalVolume(SolidAttach, fConstructor->GetCaloMaterial(ThisUnitParameter->AttachMatIndex), "AttachLogical");
-                if (ThisUnitParameter->ifDoubleSidedReadout)
-                {
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, -Passive_z - ThisUnitParameter->AttachThick / 2.), AttachLogical, "AttachPhysical", HousingLogical, false, 0, pcheckOverlaps);
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Passive_z + ThisUnitParameter->AttachThick / 2.), AttachLogical, "AttachPhysical", HousingLogical, false, 0, pcheckOverlaps);
-                }
-                else
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, -Passive_z), AttachLogical, "AttachPhysical", HousingLogical, false, 0, pcheckOverlaps);
-            }
 
             // Passive
             G4Box *SolidPassive = new G4Box("SolidPassive", Passive_x, Passive_y, Passive_z);
@@ -68,15 +55,10 @@ namespace SimCalModule
             SensitiveLogical = new G4LogicalVolume(SolidSensitive, fConstructor->GetCaloMaterial(ThisUnitParameter->SensitiveMatIndex), "SensitiveLogical");
             new G4PVPlacement(0, G4ThreeVector(), SensitiveLogical, "SensitivePhysical", PassiveLogical, false, 0, pcheckOverlaps);
 
-            // Sensitive
+            // Sensitive_dig_out
             G4Box *SolidSensitive_dig_out = new G4Box("SolidSensitive_dig_out", Sensitive_dig_out_x, Sensitive_dig_out_y, Sensitive_dig_out_z);
             Sensitive_dig_out_Logical = new G4LogicalVolume(SolidSensitive_dig_out, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "Sensitive_dig_out_Logical");
             new G4PVPlacement(0, G4ThreeVector(0,0,-Sensitive_z+Sensitive_dig_out_z), Sensitive_dig_out_Logical, "Sensitive_dig_out_Physical", SensitiveLogical, false, 0, pcheckOverlaps);
-            SetVisAttributes();
-
-            G4Box *SolidSensitive_dig_out_ESR = new G4Box("SolidSensitive_dig_out_ESR", Sensitive_dig_out_x, Sensitive_dig_out_y, ThisUnitParameter->PassiveCoverThick/2);
-            Sensitive_dig_out_Logical_ESR = new G4LogicalVolume(SolidSensitive_dig_out_ESR, fConstructor->GetCaloMaterial(ThisUnitParameter->Sensitive_dig_out_MatIndex), "Sensitive_dig_out_Logical_ESR");
-            new G4PVPlacement(0, G4ThreeVector(0,0,-Sensitive_z-ThisUnitParameter->PassiveCoverThick/2), Sensitive_dig_out_Logical_ESR, "Sensitive_dig_out_Physical_ESR", PassiveLogical, false, 0, pcheckOverlaps);
             SetVisAttributes();
 
             fConstructor->SetCaloLogicalVolume(pCaloSensitiveLogical, SensitiveLogical);
