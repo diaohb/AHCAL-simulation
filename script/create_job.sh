@@ -1,8 +1,8 @@
 #!/bin/bash
-Time=0923_30050126_1010_trigger100
+Title=1109_25000126_1010_trigger100
 Project=SimCalModule
 MyDir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal
-rundir=${MyDir}/run/${Time}/
+rundir=${MyDir}/run/${Title}/
 mkdir -p ${rundir}
 cp ${MyDir}/run/run.mac ${rundir}
 NFile=200

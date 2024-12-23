@@ -82,11 +82,11 @@ namespace SimCalModule
         EcalAbsorberThick = 3.2 * mm; // 3.2 mm for ScW ECAL
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
-        HcaltriggerThick = 10.0 * mm;
+        HcaltriggerThick = 100.0 * mm;
         HcaltriggerIndex = PlasticSciHCAL;
         HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
         HcalPCB_Cu_Thick = 0.0 * mm; //2.5mm *1/5
-        HcalPCB_Abs_gap = 4.0 * mm; //4mm-1mm
+        HcalPCB_Abs_gap = 6.5 * mm - HcalPCBThick - HcalPCB_Cu_Thick;//4mm-1mm
         UpstreamSizeX = 0 * mm;
         UpstreamSizeY = 0 * mm;
         UpstreamSizeZ = 0 * mm;
@@ -217,7 +217,7 @@ namespace SimCalModule
         MaterialStore.push_back(BGOMat); // 14
 
         G4Material *PlasticSciHCALMat = nistManager->BuildMaterialWithNewDensity("polystyrene", "G4_POLYSTYRENE", 1.032 * g / cm3);
-        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.0 * mm / MeV);
+        PlasticSciHCALMat->GetIonisation()->SetBirksConstant(0.126 * mm / MeV);
         MaterialStore.push_back(PlasticSciHCALMat); // 15
 
         G4Material *PlasticSciECALMat = nistManager->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
@@ -481,10 +481,11 @@ namespace SimCalModule
             Zpos -= HcalUnitSizeZ / 2.;    // Additional cover
 
             Zpos += HcaltriggerThick;
-            auto HCALtriggerSolid = new G4Box("HCALtriggerSolid", HcalXYsize / 2., HcalXYsize / 2., HcaltriggerThick / 2.);
-            auto HCALtriggerLogical = new G4LogicalVolume(HCALtriggerSolid, GetCaloMaterial(HcaltriggerIndex), "HCALtriggerLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
-
+            if(HcaltriggerThick>0){
+                auto HCALtriggerSolid = new G4Box("HCALtriggerSolid", HcalXYsize / 2., HcalXYsize / 2., HcaltriggerThick / 2.);
+                auto HCALtriggerLogical = new G4LogicalVolume(HCALtriggerSolid, GetCaloMaterial(HcaltriggerIndex), "HCALtriggerLogical");
+                new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
+            }
             Zpos += HcaltriggerThick + 1500. * mm;
 
             G4double HCALCoverThick = 2. * mm;

@@ -3,17 +3,17 @@ Time=0115_25000126_1010_trigger100
 Dir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal/run/${Time}/
 pedestal=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/pedestal.root
 dac=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/dac_v2.root
-mip=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/mip.root
+mip=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/mip_v2.root
 spe=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/spe.root
 sipm_model=/cefs/higgs/diaohb/SIM/saturation_model/sipm_model_0.0xt.root
 lowgain_adc=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/lowgain_e-calib.root
 
 caloDir=${Dir}/calo
 MCDir=${Dir}/MC
-DigiDir=${Dir}/Digi_800
-CalibDir=${Dir}/Calib_800
+DigiDir=${Dir}/Digi_mipcorrect800
+CalibDir=${Dir}/Calib_mipcorrect800
 RunDir=${Dir}/Run
-ListDir=${Dir}/list_800
+ListDir=${Dir}/list_mipcorrect800
 rm -rf ${RunDir}
 rm -rf ${ListDir}
 mkdir -p ${caloDir}
