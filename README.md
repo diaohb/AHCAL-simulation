@@ -14,7 +14,7 @@ This Geant4 simulation toolkit helps you to understand shower profiles with high
 ## Compile
 ```
 cd [Dir]
-mkdir build & cd build
+mkdir build && cd build
 cmake ..
 make
 ```
