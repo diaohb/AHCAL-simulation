@@ -51,6 +51,13 @@ namespace SimCalModule
         inline void SetToaCell(G4double toa) { fToaCell = toa; };
         inline G4double GetToaCell() const { return fToaCell; };
 
+        inline void SetSiPMHit(G4int hit) { fSiPMHit = hit; };
+        inline void AddSiPMHit(G4int hit) { fSiPMHit += hit; };
+        inline G4int GetSiPMHit() const { return fSiPMHit; };
+
+        inline void SetSiPMEdep(G4double edep) { fSiPMEdep = edep; };
+        inline void AddSiPMEdep(G4double edep) { fSiPMEdep += edep; };
+        inline G4double GetSiPMEdep() const { return fSiPMEdep; };
 
     private:
         G4int fCellID;
@@ -60,6 +67,8 @@ namespace SimCalModule
         G4double fEdepTemp;
         G4double fTimeCell;
         G4double fToaCell;
+        G4int fSiPMHit;
+        G4double fSiPMEdep;
     };
 
     using HcalUnitHitsCollection = G4THitsCollection<HcalUnitHit>;

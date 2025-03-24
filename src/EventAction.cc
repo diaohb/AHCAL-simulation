@@ -23,13 +23,13 @@ namespace SimCalModule
     void EventAction::BeginOfEventAction(const G4Event *anEvent)
     {
         ResetEventData();
-
         EvtID = anEvent->GetEventID();
         if (EvtID % 100 == 0)
             G4cout << "Start to simulate the event " << EvtID << G4endl;
 
         const PrimaryGeneratorAction *primary = static_cast<const PrimaryGeneratorAction *>(G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
-        ParticleEnergy = primary->GetParticleGun()->GetParticleEnergy() / MeV;
+        // ParticleEnergy = primary->GetGPS()->GetCurrentSource()->GetEneDist()->GetMonoEnergy() / MeV;
+        ParticleEnergy = anEvent->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
 
         const DetectorConstruction *detector = static_cast<const DetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
 
@@ -98,6 +98,10 @@ namespace SimCalModule
                 vecHcalVisibleEdepCell.push_back(fVisibleEdepCell);
                 vecHcalHitTimeCell.push_back((*HcalUnitHC)[i]->GetTimeCell() / ns);
                 vecHcalToaCell.push_back((*HcalUnitHC)[i]->GetToaCell() / ns);
+                vecSiPMHit.push_back((*HcalUnitHC)[i]->GetSiPMHit());
+                vecSiPMEdep.push_back((*HcalUnitHC)[i]->GetSiPMEdep() / MeV);
+
+                // G4cout << "CellID:  " << (*HcalUnitHC)[i]->GetCellID() << "  SiPMHit: " << (*HcalUnitHC)[i]->GetSiPMHit() << "  Edep: " << (*HcalUnitHC)[i]->GetEdepCell() / MeV << G4endl;
             }
             if (vecHcalEdepCell.size() > 0)
             {
@@ -131,6 +135,8 @@ namespace SimCalModule
         fRunAction->TransferData(vecHcalVisibleEdepCell, vecHcalVisibleEdepCell_Data);
         fRunAction->TransferData(vecHcalHitTimeCell, vecHcalHitTimeCell_Data);
         fRunAction->TransferData(vecHcalToaCell, vecHcalToaCell_Data);
+        fRunAction->TransferData(vecSiPMHit, vecSiPMHit_Data);
+        fRunAction->TransferData(vecSiPMEdep, vecSiPMEdep_Data);
 
         fRunAction->FillEvent();
     }
@@ -159,5 +165,7 @@ namespace SimCalModule
         vecHcalVisibleEdepCell.clear();
         vecHcalHitTimeCell.clear();
         vecHcalToaCell.clear();
+        vecSiPMHit.clear();
+        vecSiPMEdep.clear();
     }
 }

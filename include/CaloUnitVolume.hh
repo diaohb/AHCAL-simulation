@@ -26,7 +26,8 @@ namespace SimCalModule
         CaloUnitParameter *ThisUnitParameter;
         G4LogicalVolume *SensitiveLogical;
         G4LogicalVolume *Sensitive_dig_out_Logical;
-        G4LogicalVolume *Sensitive_dig_out_Logical_ESR;
+        G4LogicalVolume *ESR_dig_out_Logical;
+        G4LogicalVolume *SiPM_Sensitive_Logical;
         G4LogicalVolume *PassiveLogical;
         G4LogicalVolume *AttachLogical;
         G4LogicalVolume *HousingLogical;

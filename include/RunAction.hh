@@ -33,7 +33,9 @@ namespace SimCalModule
         vecHcalEdepCell_Data,
         vecHcalVisibleEdepCell_Data,
         vecHcalHitTimeCell_Data,
-        vecHcalToaCell_Data
+        vecHcalToaCell_Data,
+        vecSiPMHit_Data,
+        vecSiPMEdep_Data
     };
 
     class EventAction;
@@ -79,6 +81,8 @@ namespace SimCalModule
         std::vector<G4double> vecHcalVisibleEdepCell;
         std::vector<G4double> vecHcalHitTimeCell;
         std::vector<G4double> vecHcalToaCell;
+        std::vector<G4int> vecSiPMHit;
+        std::vector<G4double> vecSiPMEdep;
     };
 }
 

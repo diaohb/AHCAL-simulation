@@ -19,6 +19,7 @@
 #include "G4RunManager.hh"
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4UserLimits.hh"
 
 #include "G4GeometryManager.hh"
 #include "G4SolidStore.hh"
@@ -72,21 +73,27 @@ namespace SimCalModule
         HcalUnitParameter.House_Y = HcalUnitParameter.House_X;
         HcalUnitParameter.House_Z = 3.5 * mm;
         HcalUnitParameter.AttachThick = 0 * mm;
-        HcalUnitParameter.Sensitive_dig_out_X = 5.5 * mm;
+        HcalUnitParameter.Sensitive_dig_out_X =5.5 * mm;
         HcalUnitParameter.Sensitive_dig_out_Y = HcalUnitParameter.Sensitive_dig_out_X;
         HcalUnitParameter.Sensitive_dig_out_Z = 1.1 * mm;
+        HcalUnitParameter.SiPM_Sensitive_X = 1.3 * mm;
+        HcalUnitParameter.SiPM_Sensitive_Y = HcalUnitParameter.SiPM_Sensitive_X;
+        HcalUnitParameter.SiPM_Sensitive_Z = 0.01 * mm;
+        HcalUnitParameter.Sensitive_SiPM_MatIndex = Si;
         HcalUnitParameter.SensitiveMatIndex = PlasticSciHCAL;
-        HcalUnitParameter.Sensitive_dig_out_MatIndex = Air;
+        HcalUnitParameter.Sensitive_dig_out_MatIndex = Si;
         HcalUnitParameter.PassiveMatIndex = ESR;
         HcalUnitParameter.AttachMatIndex = Quartz;
         EcalAbsorberThick = 3.2 * mm; // 3.2 mm for ScW ECAL
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
-        HcaltriggerThick = 100.0 * mm;
+
+        HcaltriggerThick = 40.0 * mm;
         HcaltriggerIndex = PlasticSciHCAL;
-        HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
-        HcalPCB_Cu_Thick = 0.0 * mm; //2.5mm *1/5
+        HcalPCBThick = 3.0 * mm;  //2.5mm *4/5 for PCB, 1mm for component
+        HcalPCB_Cu_Thick = 0.5 * mm; //2.5mm *1/5
         HcalPCB_Abs_gap = 6.5 * mm - HcalPCBThick - HcalPCB_Cu_Thick;//4mm-1mm
+        
         UpstreamSizeX = 0 * mm;
         UpstreamSizeY = 0 * mm;
         UpstreamSizeZ = 0 * mm;
@@ -484,7 +491,7 @@ namespace SimCalModule
             if(HcaltriggerThick>0){
                 auto HCALtriggerSolid = new G4Box("HCALtriggerSolid", HcalXYsize / 2., HcalXYsize / 2., HcaltriggerThick / 2.);
                 auto HCALtriggerLogical = new G4LogicalVolume(HCALtriggerSolid, GetCaloMaterial(HcaltriggerIndex), "HCALtriggerLogical");
-                new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
+                new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALtriggerLogical, "HCALtriggerPhysicalFront", World_Logical, false, 10, ifcheckOverlaps);
             }
             Zpos += HcaltriggerThick + 1500. * mm;
 
@@ -492,7 +499,7 @@ namespace SimCalModule
             Zpos += HCALCoverThick / 2.;
             auto HCALCoverSolid = new G4Box("HCALCoverSolid", HcalXYsize / 2., HcalXYsize / 2., HCALCoverThick / 2.);
             auto HCALCoverLogical = new G4LogicalVolume(HCALCoverSolid, GetCaloMaterial(HcalAbsorberMatIndex), "HCALCoverLogical");
-            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALCoverLogical, "HCALCoverPhysicalFront", World_Logical, false, 0, ifcheckOverlaps);
+            new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALCoverLogical, "HCALCoverPhysicalFront", World_Logical, false, 11, ifcheckOverlaps);
             Zpos += 2. * mm;
             Zpos += (HCALCoverThick + HcalUnitSizeZ) / 2.;
             for (G4int z = 0; z < HcalLayerNumber; z++)
@@ -604,7 +611,24 @@ namespace SimCalModule
                 fHcalUnitSD.Put(hcalunitSD);
             }
             G4SDManager::GetSDMpointer()->AddNewDetector(fHcalUnitSD.Get());
-            SetSensitiveDetector(HcalSensitiveLogical, fHcalUnitSD.Get());
+            // SetSensitiveDetector(HcalSensitiveLogical, fHcalUnitSD.Get());
+            G4UserLimits *userLimits = new G4UserLimits(); // 最大步长 1 mm
+            // userLimits->SetMaxAllowedStep(0.1 * mm);
+            // SiPMSensitiveLogical->SetUserLimits(userLimits);
+            // HcalSensitiveLogical->SetUserLimits(userLimits);
+            // Dig_out_Logical->SetUserLimits(userLimits);
+            SiPMSensitiveLogical->SetSensitiveDetector(fHcalUnitSD.Get());
+            Dig_out_Logical->SetSensitiveDetector(fHcalUnitSD.Get());
+            HcalSensitiveLogical->SetSensitiveDetector(fHcalUnitSD.Get()); 
+            
+            
+            // HCAL SiPM SD
+            // if (SiPMSensitiveLogical != nullptr)
+            // {
+                // G4SDManager::GetSDMpointer()->AddNewDetector(fHcalUnitSD.Get());
+                    // SetSensitiveDetector(SiPMSensitiveLogical, fHcalUnitSD.Get());
+                // G4cout << "diaohb  " << SiPMSensitiveLogical->GetName() << "  " << HcalSensitiveLogical->GetName() << G4endl;
+            // }
         }
 
         // Field
@@ -744,5 +768,10 @@ namespace SimCalModule
             EcalSensitiveLogical = fCaloLogical;
         else if (&myCaloLogical == &HcalSensitiveLogical)
             HcalSensitiveLogical = fCaloLogical;
+    }
+    void DetectorConstruction::SetSiPMLogicalVolume(G4LogicalVolume *fdigoutLogical, G4LogicalVolume *fCaloLogical)
+    {
+        SiPMSensitiveLogical = fCaloLogical;
+        Dig_out_Logical = fdigoutLogical;
     }
 }

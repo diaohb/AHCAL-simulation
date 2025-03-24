@@ -28,8 +28,8 @@ namespace SimCalModule
         }
         if (G4RunManager::GetRunManager()->GetRunManagerType() != G4RunManager::masterRM)
         {
-            G4String rootFileName = "calo_" + fPrimaryGen->GetParticleGun()->GetParticleDefinition()->GetParticleName() + "_";
-            rootFileName += G4BestUnit(fPrimaryGen->GetParticleGun()->GetParticleMomentum(), "Energy"); // GetParticleEnergy()
+            G4String rootFileName = "calo_" + fPrimaryGen->GetGPS()->GetParticleDefinition()->GetParticleName() + "_";
+            rootFileName += G4BestUnit(fPrimaryGen->GetGPS()->GetCurrentSource()->GetEneDist()->GetMonoEnergy(), "Energy"); // GetParticleEnergy()
             rootFileName += "_Run" + std::to_string(aRun->GetRunID());
             if (G4RunManager::GetRunManager()->GetRunManagerType() == G4RunManager::workerRM)
                 rootFileName += "_t" + std::to_string(G4Threading::G4GetThreadId());
@@ -62,6 +62,8 @@ namespace SimCalModule
             treeEvt->Branch("vecHcalVisibleEdepCell", &vecHcalVisibleEdepCell);
             treeEvt->Branch("vecHcalHitTimeCell", &vecHcalHitTimeCell);
             treeEvt->Branch("vecHcalToaCell", &vecHcalToaCell);
+            treeEvt->Branch("vecSiPMHit", &vecSiPMHit);
+            treeEvt->Branch("vecSiPMEdep", &vecSiPMEdep);
         }
     }
 
@@ -71,8 +73,8 @@ namespace SimCalModule
             G4cout << "The run with RunID  " << aRun->GetRunID() << " is finished. " << G4endl;
         if (G4RunManager::GetRunManager()->GetRunManagerType() == G4RunManager::masterRM)
         {
-            G4String rootFileName = "calo_" + fPrimaryGen->GetParticleGun()->GetParticleDefinition()->GetParticleName() + "_";
-            rootFileName += G4BestUnit(fPrimaryGen->GetParticleGun()->GetParticleMomentum(), "Energy"); // GetParticleEnergy()
+            G4String rootFileName = "calo_" + fPrimaryGen->GetGPS()->GetParticleDefinition()->GetParticleName() + "_";
+            rootFileName += G4BestUnit(fPrimaryGen->GetGPS()->GetCurrentSource()->GetEneDist()->GetMonoEnergy(), "Energy"); // GetParticleEnergy()
             rootFileName += "_Run" + std::to_string(aRun->GetRunID());
             while (rootFileName.find(" ") != G4String::npos)
             {
@@ -178,6 +180,9 @@ namespace SimCalModule
         case vecHcalStepsCell_Data:
             vecHcalStepsCell = data;
             break;
+        case vecSiPMHit_Data:
+            vecSiPMHit = data;
+            break;
         default:
         {
             G4ExceptionDescription ed;
@@ -218,6 +223,9 @@ namespace SimCalModule
             break;
         case vecHcalToaCell_Data:
             vecHcalToaCell = data;
+            break;
+        case vecSiPMEdep_Data:
+            vecSiPMEdep = data;
             break;
         default:
         {

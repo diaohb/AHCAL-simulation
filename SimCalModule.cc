@@ -13,6 +13,7 @@
 
 //#include "G4GDMLParser.hh"
 #include "G4TransportationManager.hh"
+#include "G4StepLimiterPhysics.hh"
 
 using namespace SimCalModule;
 
@@ -39,6 +40,7 @@ int main(int argc, char **argv)
 
     auto physicsList = new QGSP_BERT;
     physicsList->SetDefaultCutValue(0.05 * mm);
+    physicsList->RegisterPhysics(new G4StepLimiterPhysics());
     runManager->SetUserInitialization(physicsList);
 
     runManager->SetUserInitialization(new ActionInitialization);

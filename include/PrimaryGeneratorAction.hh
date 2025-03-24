@@ -3,6 +3,7 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
+#include "G4GeneralParticleSource.hh"
 #include "globals.hh"
 
 class G4ParticleGun;
@@ -23,10 +24,12 @@ namespace SimCalModule
         void SetDefaultKinematic();
         void SetBeamSpreadSigma(G4double);
         G4ParticleGun *GetParticleGun() const { return fParticleGun; };
+        G4GeneralParticleSource *GetGPS() const { return fGParticleSource;};
 
     private:
         G4ParticleGun *fParticleGun;
         PrimaryGeneratorMessenger *fGunMessenger;
+        G4GeneralParticleSource *fGParticleSource;
         G4double BeamSpreadSigma;
     };
 }

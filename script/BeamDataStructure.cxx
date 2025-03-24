@@ -20,11 +20,13 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     std::vector<Double_t> Hit_X;
     std::vector<Double_t> Hit_Y;
     std::vector<Double_t> Hit_Z;
+    std::vector<Double_t> SiPM_Energy;
+    std::vector<Int_t> SiPM_Hit;
     // TString OutputFileName = "MC_" + InputFileName;
     // if (!gSystem->AccessPathName(OutputDir + "/" + OutputFileName))
     // {
-        // std::cout << "The MC file already exists. Skipped..." << std::endl;
-        // return;
+    // std::cout << "The MC file already exists. Skipped..." << std::endl;
+    // return;
     // }
     TFile *ConvertFile = TFile::Open(OutputFile, "RECREATE");
     TTree *EventTree = new TTree("EventTree", "Info stored at event level");
@@ -37,6 +39,8 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     EventTree->Branch("Hit_X", &Hit_X);
     EventTree->Branch("Hit_Y", &Hit_Y);
     EventTree->Branch("Hit_Z", &Hit_Z);
+    EventTree->Branch("SiPM_Energy", &SiPM_Energy);
+    EventTree->Branch("SiPM_Hit",&SiPM_Hit);
     //------------------------------------------------------
     Int_t EvtID;
     Double_t ParticleEnergy;
@@ -60,6 +64,8 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     std::vector<Double_t>* vecHcalVisibleEdepCell = nullptr;
     std::vector<Double_t>* vecHcalHitTimeCell = nullptr;
     std::vector<Double_t>* vecHcalToaCell = nullptr;
+    std::vector<Int_t>* vecSiPMHit = nullptr;
+    std::vector<Double_t>* vecSiPMEdep = nullptr;
     TFile *DataFile = TFile::Open(InputFile);
     TTree *treeEvt = nullptr;
     DataFile->GetObject("treeEvt",treeEvt);
@@ -83,6 +89,8 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     treeEvt->SetBranchAddress("vecHcalVisibleEdepCell", &vecHcalVisibleEdepCell);
     treeEvt->SetBranchAddress("vecHcalHitTimeCell", &vecHcalHitTimeCell);
     treeEvt->SetBranchAddress("vecHcalToaCell", &vecHcalToaCell);
+    treeEvt->SetBranchAddress("vecSiPMHit", &vecSiPMHit);
+    treeEvt->SetBranchAddress("vecSiPMEdep", &vecSiPMEdep);
     //------------------------------------------------------
     Int_t NEvent = treeEvt->GetEntries();
     for (Int_t i = 0; i < NEvent; i++)
@@ -94,7 +102,9 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
         Hit_X.clear();
         Hit_Y.clear();
         Hit_Z.clear();
-		total_Energy=0;
+        SiPM_Energy.clear();
+        SiPM_Hit.clear();
+        total_Energy = 0;
         if(i%10000==0)cout<<i<<"  /"<<NEvent<<endl;
         treeEvt->GetEntry(i);
         EventNum = i;
@@ -135,11 +145,14 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
             Int_t MemoID = 0;
             Int_t ChannelID = (ID_X - 1) % 6 + (ID_Y - 1) % 6 * 6;
             DetectorID.push_back(1);
-			double tmp_energy=vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it));
-			// double tmp_energy=vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it));
+			// double tmp_energy=vecHcalVisibleEdepCell->at(std::distance(vecHcalCellID->begin(), it));
+			double tmp_energy=vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it));
             // Hit_Energy.push_back(vecHcalEdepCell->at(std::distance(vecHcalCellID->begin(), it)));
             total_Energy+=tmp_energy;
 			Hit_Energy.push_back(tmp_energy);
+            double tmp_sipm_energy=vecSiPMEdep->at(std::distance(vecHcalCellID->begin(), it));
+            SiPM_Energy.push_back(tmp_sipm_energy);
+            SiPM_Hit.push_back(vecSiPMHit->at(std::distance(vecHcalCellID->begin(), it)));
             Hit_Time.push_back(vecHcalToaCell->at(std::distance(vecHcalCellID->begin(), it)));
             Hit_X.push_back(40.3 * (9 - 0.5 - ID_X + 1));
             Hit_Y.push_back(40.3 * (9 - 0.5 - ID_Y + 1));

@@ -45,6 +45,8 @@ namespace SimCalModule
         std::vector<G4double> vecHcalVisibleEdepCell;
         std::vector<G4double> vecHcalHitTimeCell;
         std::vector<G4double> vecHcalToaCell;
+        std::vector<G4int> vecSiPMHit;
+        std::vector<G4double> vecSiPMEdep;
     };
 }
 

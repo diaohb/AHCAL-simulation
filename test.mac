@@ -1,14 +1,21 @@
-/control/verbose 2
-/run/verbose 1
+/control/verbose 0
+/run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
 
 /run/initialize
 
-/gun/particle e-
+/gps/particle e-
 
-/gun/position 1 1 -1000 mm
-/cal/gun/BeamSpreadSigma 10 mm
+/gps/ene/type Gauss
+/gps/direction 0 0 1
+/gps/ene/mono 10 GeV
+/gps/ene/sigma 0.1 GeV
 
-/gun/momentumAmp 100 GeV
+/gps/pos/type Beam
+/gps/pos/centre 1 1 -1000 mm
+/gps/pos/sigma_x 20 mm
+/gps/pos/sigma_y 20 mm
+
 /run/beamOn 1
+

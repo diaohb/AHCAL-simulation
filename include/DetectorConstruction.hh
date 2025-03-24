@@ -55,6 +55,10 @@ namespace SimCalModule
         G4double House_X;
         G4double House_Y;
         G4double House_Z;
+        G4double SiPM_Sensitive_X;
+        G4double SiPM_Sensitive_Y;
+        G4double SiPM_Sensitive_Z;
+        MaterialIndex Sensitive_SiPM_MatIndex;
         MaterialIndex SensitiveMatIndex;
         MaterialIndex Sensitive_dig_out_MatIndex;
         MaterialIndex PassiveMatIndex;
@@ -85,6 +89,7 @@ namespace SimCalModule
         void SetUpstreamObjThick(G4double);
         void SetIntermediateObjThick(G4double);
         void SetCaloLogicalVolume(G4LogicalVolume *&, G4LogicalVolume *);
+        void SetSiPMLogicalVolume(G4LogicalVolume *, G4LogicalVolume *);
         void SetEcalStepTimeLimit(G4double);
         void SetHcalStepTimeLimit(G4double);
         G4int GetEcalModuleType() const { return EcalModuleType; }
@@ -135,6 +140,8 @@ namespace SimCalModule
         G4LogicalVolume *HcalUnitLogical;
         G4LogicalVolume *EcalSensitiveLogical;
         G4LogicalVolume *HcalSensitiveLogical;
+        G4LogicalVolume *SiPMSensitiveLogical;
+        G4LogicalVolume *Dig_out_Logical;
         CaloUnitVolume *EcalUnitVolume;
         CaloUnitVolume *HcalUnitVolume;
         std::vector<G4Material *> MaterialStore;
