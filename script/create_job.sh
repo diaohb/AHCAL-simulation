@@ -1,12 +1,12 @@
 #!/bin/bash
-# Title=0312_30050126_trigger40
-Title=mu-_30050126_40
+Title=0405_35080126_trigger40
+# Title=mu-_30050126_40
 Project=SimCalModule
-MyDir=/cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal
+MyDir=/home/diaohb/CEPC/AHCAL-simulation/
 rundir=${MyDir}/run/${Title}/
 mkdir -p ${rundir}
-cp ${MyDir}/run/run.mac ${rundir}
-NFile=200
+cp ${MyDir}/run/e-run.mac ${rundir}/run.mac
+NFile=50
 for i in $(seq 1 ${NFile})
 do
     RunDir=${rundir}/run${i}
@@ -14,10 +14,9 @@ do
     then
         mkdir -p ${RunDir}
     fi
-    echo "source /cefs/higgs/diaohb/SIM/cern-testbeam-simulation-for-scecal-and-ahcal/setup_LCG.sh" > ${RunDir}/job.sh
+    echo "cd ${RunDir}" > ${RunDir}/job.sh
     chmod +x ${RunDir}/job.sh
-    echo "cd ${RunDir}" >> ${RunDir}/job.sh
     j=$(expr ${i} \* 2 + 50489)
     echo "${MyDir}/build/${Project} ${rundir}/run.mac ${j}" >> ${RunDir}/job.sh
-    hep_sub -os CentOS7 ${RunDir}/job.sh
+    bash ${RunDir}/job.sh
 done
