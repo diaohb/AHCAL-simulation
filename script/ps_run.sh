@@ -1,5 +1,5 @@
 #!/bin/bash
-Time=0405_30080126_trigger40
+Time=0826_30080126_trigger40_pi_126
 # Time=mu-_30050126_40
 # Time=test
 Dir=/home/diaohb/CEPC/AHCAL-simulation/run/${Time}/
@@ -14,11 +14,11 @@ sipm_model=/home/diaohb/CEPC/AHCAL-analyse/calibration/sipm_model/sipm_model_0.0
 lowgain_adc=/home/diaohb/CEPC/ihep/SPS/calibration/lowgain_e-calib.root
 
 caloDir=${Dir}/calo
-MCDir=${Dir}/MC_nobirks
-DigiDir=${Dir}/Digi_PS8
-CalibDir=${Dir}/Calib_PS8
+MCDir=${Dir}/MC
+DigiDir=${Dir}/Digi_PS_noise1
+CalibDir=${Dir}/Calib_PS_noise1
 RunDir=${Dir}/Run
-ListDir=${Dir}/list_PS8
+ListDir=${Dir}/list_PS_noise1
 rm -rf ${RunDir}
 rm -rf ${ListDir}
 mkdir -p ${caloDir}
@@ -28,14 +28,19 @@ mkdir -p ${CalibDir}
 mkdir -p ${RunDir}
 mkdir -p ${ListDir}
 log=$ListDir/log
-echo "original digitization">$log
-echo "no birks">>$log
+echo "birks constant 0.126">$log
+echo "original digitization">>$log
+echo "have birks">>$log
 echo "consider intercept in highgain lowgian ratio">>$log
 echo "add 0.015 temperature uniformity">>$log
 echo "increase highgain pedestal sigma to 2 times">>$log
-echo "increase lowgain pedestal sigma to 5 times">>$log
+echo "increase lowgain pedestal sigma to 2 times">>$log
 echo "increase spe sigma to 8">>$log
 echo "add 0.02 non linearity (gaussian) to highgain lowgian adc">>$log
+# echo "0.00002 noise exp photon energy / 4.6">>$log
+echo "channel level noise">>$log
+echo "increase light yield uncertenty to 0.06">>$log
+# echo "">>$log
 RunNumber=50
 for datafile in $(ls ${Dir}/run1 |grep 'root')
 do
@@ -53,15 +58,14 @@ do
 	energy=${datafile##*_}
 	energy=${energy%G*}
 	energy=${energy%M*}
-	if ((energy>=10 && energy!=500));then
-		continue
-	fi
+	# if ((energy>=10 && energy!=500));then
+		# continue
+	# fi
 	infile=${caloDir}/${datafile}
 	outfile=${MCDir}/MC_${datafile#*_}
 
-	# echo -e "${mergecmd}" >>${RunDir}/${shellfile}
-	echo "# nobirks" >> ${RunDir}/${shellfile}
-	# echo -e "root -l -b -q '/home/diaohb/CEPC/AHCAL-simulation/script/BeamDataStructure.cxx(\"${infile}\",\"${outfile}\",0)'">>${RunDir}/${shellfile}
+	echo -e "${mergecmd}" >>${RunDir}/${shellfile}
+	echo -e "root -l -b -q '/home/diaohb/CEPC/AHCAL-simulation/script/BeamDataStructure.cxx(\"${infile}\",\"${outfile}\",0)'">>${RunDir}/${shellfile}
 	echo -e "${outfile}"  >> ${ListDir}/truth
 	infile=MC_${datafile#*_}
 	outfile=Digi_${datafile#*_}

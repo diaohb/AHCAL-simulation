@@ -1,44 +1,44 @@
-#include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
+#include "DetectorConstruction.hh"
 
 #include "G4RunManagerFactory.hh"
-#include "G4UImanager.hh"
-#include "G4UIExecutive.hh"
-#include "G4VisExecutive.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4UIExecutive.hh"
+#include "G4UImanager.hh"
+#include "G4VisExecutive.hh"
 
 #include "QGSP_BERT.hh"
+#include "QGSP_BERT_HP.hh"
 
 #include "Randomize.hh"
 
 //#include "G4GDMLParser.hh"
-#include "G4TransportationManager.hh"
 #include "G4StepLimiterPhysics.hh"
+#include "G4TransportationManager.hh"
 
 using namespace SimCalModule;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     G4UIExecutive *ui = nullptr;
     if (argc == 1)
         ui = new G4UIExecutive(argc, argv);
 
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     std::time_t systime = std::time(nullptr);
-    G4int seed = (long)systime;
+    G4int seed = (long) systime;
     if (argc >= 3)
-        seed = atoi(argv[2]); // OR: seed = atoi(argv[2]) * seed;
+        seed = atoi(argv[2]);// OR: seed = atoi(argv[2]) * seed;
     G4Random::setTheSeed(seed);
 
-	// auto runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::SerialOnly);
-	auto runManager = G4RunManagerFactory::CreateRunManager();
-	G4int nThreads = std::min(G4Threading::G4GetNumberOfCores(), 10);
-	runManager->SetNumberOfThreads(nThreads);
+    // auto runManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::SerialOnly);
+    auto runManager = G4RunManagerFactory::CreateRunManager();
+    G4int nThreads = std::min(G4Threading::G4GetNumberOfCores(), 10);
+    runManager->SetNumberOfThreads(nThreads);
 
     auto Detector = new DetectorConstruction();
     runManager->SetUserInitialization(Detector);
 
-    auto physicsList = new QGSP_BERT;
+    auto physicsList = new QGSP_BERT_HP;
     physicsList->SetDefaultCutValue(0.05 * mm);
     physicsList->RegisterPhysics(new G4StepLimiterPhysics());
     runManager->SetUserInitialization(physicsList);
@@ -52,19 +52,15 @@ int main(int argc, char **argv)
     // get the pointer to the User Interface manager
     G4UImanager *UImanager = G4UImanager::GetUIpointer();
 
-    if (ui)
-    {
+    if (ui) {
         // interactive mode
         UImanager->ApplyCommand("/control/execute vis.mac");
-        if (ui->IsGUI())
-        {
+        if (ui->IsGUI()) {
             // UImanager->ApplyCommand("/control/execute gui.mac");
         }
         ui->SessionStart();
         delete ui;
-    }
-    else
-    {
+    } else {
         // batch mode
         G4String command = "/control/execute ";
         G4String fileName = argv[1];
@@ -72,7 +68,7 @@ int main(int argc, char **argv)
     }
 
     // GDML
-/*    if (argc == 4)
+    /*    if (argc == 4)
     {
         G4GDMLParser parser;
         parser.SetRegionExport(true);

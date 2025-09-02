@@ -1,11 +1,11 @@
 #!/bin/bash
-Title=0405_35080126_trigger40
+Title=0831_30080126_trigger100
 # Title=mu-_30050126_40
 Project=SimCalModule
 MyDir=/home/diaohb/CEPC/AHCAL-simulation/
 rundir=${MyDir}/run/${Title}/
 mkdir -p ${rundir}
-cp ${MyDir}/run/e-run.mac ${rundir}/run.mac
+cp ${MyDir}/run/sps_e-run.mac ${rundir}/run.mac
 NFile=50
 for i in $(seq 1 ${NFile})
 do
