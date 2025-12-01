@@ -26,6 +26,8 @@
 #include "G4LogicalVolumeStore.hh"
 #include "G4PhysicalVolumeStore.hh"
 
+#include "CADMesh.hh"
+
 namespace SimCalModule
 {
     DetectorConstruction::DetectorConstruction()
@@ -88,10 +90,11 @@ namespace SimCalModule
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
 
-        HcaltriggerThick = 40.0 * mm;
+        HcaltriggerThick = 100.0 * mm;
         HcaltriggerIndex = PlasticSciHCAL;
-        HcalPCBThick = 3.0 * mm;  //2.5mm *4/5 for PCB, 1mm for component
-        HcalPCB_Cu_Thick = 0.8 * mm; //2.5mm *1/5
+        HcalPCBThick = 3.55 * mm;  //2.5mm *4/5 for PCB, 1mm for component
+        // HcalPCBThick = 2.5 * mm;  //2.5mm *4/5 for PCB, 1mm for component
+        HcalPCB_Cu_Thick = 0. * mm; //2.5mm *1/5
         HcalPCB_Abs_gap = 6.5 * mm - HcalPCBThick - HcalPCB_Cu_Thick;//4mm-1mm
         
         UpstreamSizeX = 0 * mm;
@@ -111,9 +114,9 @@ namespace SimCalModule
         EcalCellNumberX = 5;
         EcalCellNumberY = 42;
         EcalLayerNumber = 32;
-        HcalCellNumberX = 18;
-        HcalCellNumberY = 18;
-        HcalLayerNumber = 40;
+        HcalCellNumberX = 2;
+        HcalCellNumberY = 2;
+        HcalLayerNumber = 1;
         EcalModuleType = 0; // 0:Off; 1:Cube; 2:Crossed bar; 3:ScW ECAL
         HcalModuleType = 1; // 0:Off; 1:AHCAL; 2:GSHCAL
         EcalStepTimeLimit = 150.0 * ns;
@@ -192,18 +195,19 @@ namespace SimCalModule
         EpoxyMat->AddElement(EleO, nAtoms = 3);
         MaterialStore.push_back(EpoxyMat); // 10
 
-		G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-		FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
-		FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
+		// G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
+		// FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent);
+		// FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent);
         
         //PCB:Cu=4:1, frac of V, thick=2.5mm
         // components_thick=3mm/3=1mm, mat=FR4
         //total FR4:Cu=3mm:0.5mm, density=(3*1.86+0.5*8.9)/(3+0.5)=2.86
+        double Cu_frac = 0.;
 
-        // G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 2);
-        // FR4Mat->AddMaterial(QuartzMat, fracMass = 50 * perCent);
-        // FR4Mat->AddMaterial(EpoxyMat, fracMass = 50 * perCent);
-        // FR4Mat->AddMaterial(CuMat, fracMass = 44.4 * perCent);
+        G4Material *FR4Mat = new G4Material("FR4", density = 1.86 * g / cm3, nComponents = 3);
+        FR4Mat->AddMaterial(QuartzMat, fracMass = 52.8 * perCent * (1 - Cu_frac));
+        FR4Mat->AddMaterial(EpoxyMat, fracMass = 47.2 * perCent * (1 - Cu_frac));
+        FR4Mat->AddMaterial(CuMat, fracMass = Cu_frac * perCent);
         MaterialStore.push_back(FR4Mat); // 11
 
         // G4Material *ESRMat = new G4Material("ESR", density = 0.90 * g / cm3, nElements = 2);
@@ -450,7 +454,6 @@ namespace SimCalModule
         G4double HcalUnitSizeZ = HcalUnitParameter.SensitiveLength + 2. * HcalUnitParameter.PassiveCoverThick + ((G4int)(HcalUnitParameter.ifDoubleSidedReadout) + 1) * HcalUnitParameter.AttachThick;
         G4Box *HcalAbsSolid = nullptr;
         G4LogicalVolume *HcalAbsLogical = nullptr;
-        G4Box *HcalPCBSolid = nullptr;
         G4LogicalVolume *HcalPCBLogical = nullptr;
         G4Box *HcalPCB_Cu_Solid = nullptr;
         G4LogicalVolume *HcalPCB_Cu_Logical = nullptr;
@@ -464,8 +467,9 @@ namespace SimCalModule
             }
             if (HcalPCBThick > 0)
             {
-                HcalPCBSolid = new G4Box("HcalPCBSolid", HcalXYsize / 2., HcalXYsize / 2., HcalPCBThick / 2.);
-                HcalPCBLogical = new G4LogicalVolume(HcalPCBSolid, GetCaloMaterial(HcalPCBMatIndex), "HcalPCBLogical");
+                // HcalPCBSolid = new G4Box("HcalPCBSolid", HcalXYsize / 2., HcalXYsize / 2., HcalPCBThick / 2.);
+                auto HcalPCBSolid = CADMesh::TessellatedMesh::FromSTL("../HBU_V4_meshed.stl");
+                HcalPCBLogical = new G4LogicalVolume(HcalPCBSolid->GetSolid(), GetCaloMaterial(HcalPCBMatIndex), "HcalPCBLogical");
             }
             if (HcalPCB_Cu_Thick > 0)
             {
@@ -516,7 +520,9 @@ namespace SimCalModule
                 }
                 Zpos += (HcalUnitSizeZ + HcalPCBThick) / 2.;
                 if (HcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+                    new G4PVPlacement(0, G4ThreeVector(-241.8, -1.7, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+                    new G4PVPlacement(0, G4ThreeVector(0, -1.7, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
+                    new G4PVPlacement(0, G4ThreeVector(241.8, -1.7, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
 
 
                 Zpos += (HcalPCBThick + HcalPCB_Cu_Thick) / 2.;
@@ -534,39 +540,7 @@ namespace SimCalModule
             Zpos += HCALCoverThick / 2.;
             new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HCALCoverLogical, "HCALCoverPhysicalBack", World_Logical, false, 0, ifcheckOverlaps);
         }
-        else if (HcalModuleType == 2)
-        {
-            G4RotationMatrix *HcalUnitInv = new G4RotationMatrix();
-            HcalUnitInv->rotateY(180. * deg);
-            G4double Zpos = HcalUnitSizeZ / 2.;
-            if (EcalModuleType > 0)
-                Zpos += (EcalUnitSizeZ + EcalPCBThick + EcalAbsorberThick) * EcalLayerNumber;
-            if (IntermediateSizeX * IntermediateSizeY * IntermediateSizeZ > 0)
-                Zpos += IntermediateSizeZ;
-            auto HcalCellMax = std::to_string(std::max(HcalCellNumberX, HcalCellNumberY));
-            G4int HcalCellMaxCount = pow(10, HcalCellMax.length());
-            G4int HcalCopyNum = 0;
-            for (G4int z = 0; z < HcalLayerNumber; z++)
-            {
-                for (G4int y = 0; y < HcalCellNumberY; y++)
-                {
-                    HcalCopyNum = (z + 1) * HcalCellMaxCount * HcalCellMaxCount + (y + 1) * HcalCellMaxCount;
-                    for (G4int x = 0; x < HcalCellNumberX; x++)
-                    {
-                        HcalCopyNum++;
-                        new CaloUnitVolume("HcalUnit", HcalUnitInv, G4ThreeVector(HcalUnitSizeX * (HcalCellNumberX / 2. - 0.5 - x), HcalUnitSizeY * (HcalCellNumberY / 2. - 0.5 - y), Zpos),
-                                           ifcheckOverlaps, World_Logical, HcalUnitLogical, HcalSensitiveLogical, &HcalUnitParameter, false, HcalCopyNum, this);
-                    }
-                }
-                Zpos += (HcalUnitSizeZ + HcalPCBThick) / 2.;
-                if (HcalPCBThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalPCBLogical, "HcalPCBPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (HcalPCBThick + HcalAbsorberThick) / 2.;  // HcalPCBGap 4 mm
-                if (HcalAbsorberThick > 0)
-                    new G4PVPlacement(0, G4ThreeVector(0, 0, Zpos), HcalAbsLogical, "HcalAbsPhysical", World_Logical, false, HcalCopyNum / HcalCellMaxCount / HcalCellMaxCount * HcalCellMaxCount * HcalCellMaxCount, ifcheckOverlaps);
-                Zpos += (HcalAbsorberThick + HcalUnitSizeZ) / 2.;
-            }
-        }
+
 
         // Visualization attributes
         G4VisAttributes *AbsVisAtt = new G4VisAttributes(G4Colour(0.28, 0.82, 0.8, 0.3)); // Light Blue
