@@ -13,6 +13,7 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     //------------------------------------------------------
     Int_t EventNum;
 	double total_Energy=0;
+    double ParticleKinEnergy=0;
     std::vector<Int_t> DetectorID;
     std::vector<Int_t> CellID;
     std::vector<Double_t> Hit_Energy;
@@ -31,6 +32,7 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     TFile *ConvertFile = TFile::Open(OutputFile, "RECREATE");
     TTree *EventTree = new TTree("EventTree", "Info stored at event level");
     EventTree->Branch("EventNum", &EventNum, "EventNum/I");
+    EventTree->Branch("ParticleKinEnergy", &ParticleKinEnergy);
     EventTree->Branch("DetectorID", &DetectorID);
     EventTree->Branch("CellID", &CellID);
     EventTree->Branch("Energy_HCAL", &total_Energy);
@@ -108,6 +110,7 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
         if(i%10000==0)cout<<i<<"  /"<<NEvent<<endl;
         treeEvt->GetEntry(i);
         EventNum = i;
+        ParticleKinEnergy=ParticleEnergy;
         if (ECALOption == 1)
             for (auto it = vecEcalCellID->begin(); it != vecEcalCellID->end(); it++)
             {

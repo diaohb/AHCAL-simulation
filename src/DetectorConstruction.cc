@@ -88,7 +88,7 @@ namespace SimCalModule
         HcalAbsorberThick = 20.0 * mm;
         EcalPCBThick = 2.0 * mm;
 
-        HcaltriggerThick = 100.0 * mm;
+        HcaltriggerThick = 40.0 * mm;
         HcaltriggerIndex = PlasticSciHCAL;
         HcalPCBThick = 3.0 * mm;  //2.5mm *4/5 for PCB, 1mm for component
         HcalPCB_Cu_Thick = 0.8 * mm; //2.5mm *1/5

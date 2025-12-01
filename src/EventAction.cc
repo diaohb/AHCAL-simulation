@@ -44,6 +44,20 @@ namespace SimCalModule
             auto sdManager = G4SDManager::GetSDMpointer();
             fHcalCollID = sdManager->GetCollectionID("HcalUnitHitsCollection");
         }
+
+        // const G4PrimaryVertex* vertex = anEvent->GetPrimaryVertex();
+        // if (vertex) {
+        //     const G4PrimaryParticle* particle = vertex->GetPrimary();
+        //     if (particle) {
+        //         G4ThreeVector mom = particle->GetMomentum();
+        //         G4double kinE = particle->GetKineticEnergy();  // 直接取
+
+        //         G4cout << "Event " << anEvent->GetEventID()
+        //             << " primary momentum = " << mom.mag()
+        //             << " kinetic energy = " << kinE / GeV << " GeV"
+        //             << G4endl;
+        //     }
+        // }
     }
 
     void EventAction::EndOfEventAction(const G4Event *anEvent)
