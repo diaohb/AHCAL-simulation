@@ -39,26 +39,31 @@ namespace SimCalModule
     {
         if (aStep->GetTrack()->GetGlobalTime() > detector->GetHcalStepTimeLimit())
             return false;
-
+        // G4cout<<"detector->GetHcalStepTimeLimit()  "<<detector->GetHcalStepTimeLimit()<<G4endl;
         G4StepPoint *thePrePoint = aStep->GetPreStepPoint();
         G4StepPoint *thePostPoint = aStep->GetPostStepPoint();
         G4int copyNo = thePrePoint->GetTouchableHandle()->GetCopyNumber(2);
         G4int copyNo0 = thePrePoint->GetTouchableHandle()->GetCopyNumber();
         G4int copyNo0post = thePostPoint->GetTouchableHandle()->GetCopyNumber();
         G4int flag = 0;
-        if(copyNo0 == 1){
+        if (copyNo0 == 1)
+        {
             flag = 1;
         }
-        else if(copyNo0 == 2){
+        else if (copyNo0 == 2)
+        {
             copyNo = thePrePoint->GetTouchableHandle()->GetCopyNumber(3);
-            if(copyNo0post == 1){
+            if (copyNo0post == 1)
+            {
                 flag = 1;
             }
-            else if(copyNo0post == 3){
+            else if (copyNo0post == 3)
+            {
                 flag = 2;
             }
         }
-        else if(copyNo0 == 3){
+        else if (copyNo0 == 3)
+        {
             flag = 3;
             copyNo = thePrePoint->GetTouchableHandle()->GetCopyNumber(4);
         }
@@ -70,11 +75,13 @@ namespace SimCalModule
         // G4cout<<"copyNo0: "<<copyNo0<<" copyNo0post: "<<copyNo0post<<" copyNo: "<<copyNo<<"  "<<thePrePoint->GetPosition().getX()<< "  "<<thePostPoint->GetPosition().getX()<<G4endl;
         // G4cout<<edep/aStep->GetStepLength()<<"  "<<edep<<"  "<<aStep->GetStepLength()<<G4endl;
         HcalUnitHit *hit = nullptr;
-        if(flag != 0){
+        if (flag != 0)
+        {
             if (CellIDDecoder.find(copyNo) != CellIDDecoder.end())
             {
                 hit = (*fHcalUnitHitsCollection)[CellIDDecoder[copyNo]];
-                if(flag == 1){
+                if (flag == 1)
+                {
                     hit->AddEdepCell(edep);
                     hit->AddVisibleEdepCell(BirksAttenuation(aStep));
                     hit->AddStepsCell(1);
@@ -84,11 +91,13 @@ namespace SimCalModule
                         hit->SetEdepTemp(edep);
                     }
                 }
-                else if(flag == 2){
+                else if (flag == 2)
+                {
                     hit->AddSiPMHit(1);
                     hit->AddSiPMEdep(edep);
                 }
-                else if(flag == 3){
+                else if (flag == 3)
+                {
                     hit->AddSiPMEdep(edep);
                 }
                 hit->SetToaCell(aStep->GetTrack()->GetGlobalTime());
@@ -96,7 +105,8 @@ namespace SimCalModule
             else
             {
                 hit = new HcalUnitHit(copyNo);
-                if(flag == 1){
+                if (flag == 1)
+                {
                     hit->SetEdepCell(edep);
                     hit->SetVisibleEdepCell(BirksAttenuation(aStep));
                     hit->SetEdepTemp(edep);
@@ -106,7 +116,8 @@ namespace SimCalModule
                     hit->SetSiPMHit(0);
                     hit->SetSiPMEdep(0);
                 }
-                else if(flag == 2){
+                else if (flag == 2)
+                {
                     hit->SetEdepCell(0);
                     hit->SetVisibleEdepCell(0);
                     hit->SetEdepTemp(0);
@@ -117,7 +128,8 @@ namespace SimCalModule
                     hit->SetSiPMEdep(edep);
                     // G4cout<<"diaohb  "<<hit->GetSiPMHit()<<G4endl;
                 }
-                else if(flag == 3){
+                else if (flag == 3)
+                {
                     hit->SetEdepCell(0);
                     hit->SetVisibleEdepCell(0);
                     hit->SetEdepTemp(0);
@@ -133,7 +145,6 @@ namespace SimCalModule
                 fHitIndex++;
             }
         }
-
 
         return true;
     }

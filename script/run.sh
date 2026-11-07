@@ -1,6 +1,7 @@
-#!/bin/bash
-# Title=0906_25000126_trigger100
-Title=0912_25000126_trigger100_pi
+# !/bin/bash
+Title=ML_0126_trigger60_model_25_material_0_pi_gradient
+# Title=1222_0126_trigger60_model_25_material_0_pi
+# Title=0630_0126_trigger60_model_25_material_0_pi_SPS
 Dir=/cefs/higgs/diaohb/SIM/AHCAL-simulation/run/${Title}/
 pedestal=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/pedestal.root
 dac=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/ratio/calib/pi-/calib.root
@@ -14,23 +15,25 @@ lowgain_adc=/cefs/higgs/diaohb/CEPC2023/SPS/calibration/lowgain_e-calib.root
 
 caloDir=${Dir}/calo
 MCDir=${Dir}/MC
-DigiDir=${Dir}/Digi_SPS_nonlinear1
-CalibDir=${Dir}/Calib_SPS_nonlinear1
+DigiDir=${Dir}/Digi_SPS_nolow
+CalibDir=${Dir}/Calib_SPS_nolow
+CorDir=${Dir}/Correct_SPS_nolow
 RunDir=${Dir}/Run
-ListDir=${Dir}/list_SPS_nonlinear1
+ListDir=${Dir}/list_SPS_nolow_correct
 rm -rf ${RunDir}
-rm -rf ${ListDir}
+rm -rf ${ListDir}/*
 mkdir -p ${caloDir}
 mkdir -p ${MCDir}
 mkdir -p ${DigiDir}
 mkdir -p ${CalibDir}
+mkdir -p ${CorDir}
 mkdir -p ${RunDir}
 mkdir -p ${ListDir}
 log=$ListDir/log
 # echo "no sipm non linearity">$log
 echo "birks constant 0.126">$log
 echo "original digitization">>$log
-echo "no birks">>$log
+# echo "no birks">>$log
 echo "consider intercept in highgain lowgian ratio">>$log
 echo "add 0.015 temperature uniformity">>$log
 echo "increase highgain pedestal sigma to 2 times">>$log
@@ -38,13 +41,13 @@ echo "increase lowgain pedestal sigma to 2 times">>$log
 echo "increase spe sigma to 8">>$log
 echo "add 0.02 non linearity (gaussian) to highgain lowgian adc">>$log
 # echo "0.00002 noise exp photon energy / 4.6">>$log
-# echo "no noise">>$log
+echo "no noise">>$log
 echo "channel level noise: histogram sample">>$log
 echo "increase light yield uncertenty to 0.06">>$log
-echo "add lowgain non-linearity, layer 2 to 13 use fit parameters, other layers use (400 1)">>$log
+# echo "add lowgain non-linearity, layer 2 to 13 use fit parameters, other layers use (400 1)">>$log
 # echo "signal 100% overwrite noise">>$log
 RunNumber=200
-for datafile in $(ls ${Dir}/run1 |grep 'root')
+for datafile in $(ls ${Dir}/run2 |grep 'root')
 do
 	shellfile=${datafile%_*}.sh
 
@@ -66,8 +69,9 @@ do
 	infile=${caloDir}/${datafile}
 	outfile=${MCDir}/MC_${datafile#*_}
 
-	# echo -e "${mergecmd}" >>${RunDir}/${shellfile}
-	# echo -e "root -l -b -q '/cefs/higgs/diaohb/SIM/AHCAL-simulation/script/BeamDataStructure.cxx(\"${infile}\",\"${outfile}\",0)'">>${RunDir}/${shellfile}
+	# echo -e "source ~/.bash_profile" >>${RunDir}/${shellfile}
+	echo -e "${mergecmd}" >>${RunDir}/${shellfile}
+	echo -e "root -l -b -q '/cefs/higgs/diaohb/SIM/AHCAL-simulation/script/BeamDataStructure.cxx(\"${infile}\",\"${outfile}\",0)'">>${RunDir}/${shellfile}
 	echo -e "${outfile}"  >> ${ListDir}/truth
 	infile=MC_${datafile#*_}
 	outfile=Digi_${datafile#*_}
@@ -77,6 +81,10 @@ do
 	outfile=Calib_${datafile#*_}
 	echo -e "Calib ${DigiDir}/${infile} $pedestal $dac $mip ${CalibDir}/${outfile}">>${RunDir}/${shellfile}
 	echo -e "${CalibDir}/${outfile}"  >> ${ListDir}/calib
+	infile=${outfile}
+	outfile=Correct_${datafile#*_}
+	echo -e "satu_correct ${CalibDir}/${infile} $pedestal $dac $mip $spe ${CorDir}/${outfile}">>${RunDir}/${shellfile}
+	echo -e "${CorDir}/${outfile}"  >> ${ListDir}/correct
 	chmod +x ${RunDir}/${shellfile}
 	hep_sub  ${RunDir}/${shellfile}
 done
