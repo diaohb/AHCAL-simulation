@@ -4,6 +4,7 @@
 #include "globals.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "CaloUnitVolume.hh"
+#include "PCBVolume.hh"
 #include "EcalUnitSD.hh"
 #include "HcalUnitSD.hh"
 #include "G4Cache.hh"
@@ -37,7 +38,33 @@ namespace SimCalModule
         BGO,
         PlasticSciHCAL,
         PlasticSciECAL,
-        SciGlass
+        SciGlass,
+
+        SR0603,
+        SC1206,
+        SC0402,
+        SN74LVC125A,
+        STC3528,
+        PW0016A,
+        _8SOP,
+        SOIC8,
+        SOP58P810,
+        SD0805,
+        PW24,
+        KS5,
+        TMP117,
+        SOIC127P600,
+        RJ6,
+        RT3,
+        SR0402,
+        D8,
+        BB02,
+        FH29BW,
+        STC3216,
+        _0603,
+        BGA,
+        MCH,
+        SC0603
     };
 
     struct CaloUnitParameter
@@ -63,6 +90,37 @@ namespace SimCalModule
         MaterialIndex Sensitive_dig_out_MatIndex;
         MaterialIndex PassiveMatIndex;
         MaterialIndex AttachMatIndex;
+    };
+    struct PCBParameter
+    {
+        G4double PCBThick;
+        MaterialIndex AirIndex;
+        MaterialIndex PCBMatIndex;
+        MaterialIndex SR0603MatIndex;
+        MaterialIndex SC1206MatIndex;
+        MaterialIndex SC0402MatIndex;
+        MaterialIndex SN74LVC125AMatIndex;
+        MaterialIndex STC3528MatIndex;
+        MaterialIndex PW0016AMatIndex;
+        MaterialIndex _8SOPMatIndex;
+        MaterialIndex SOIC8MatIndex;
+        MaterialIndex SOP58P810MatIndex;
+        MaterialIndex SD0805MatIndex;
+        MaterialIndex PW24MatIndex;
+        MaterialIndex KS5MatIndex;
+        MaterialIndex TMP117MatIndex;
+        MaterialIndex SOIC127P600MatIndex;
+        MaterialIndex RJ6MatIndex;
+        MaterialIndex RT3MatIndex;
+        MaterialIndex SR0402MatIndex;
+        MaterialIndex D8MatIndex;
+        MaterialIndex BB02MatIndex;
+        MaterialIndex FH29BWMatIndex;
+        MaterialIndex STC3216MatIndex;
+        MaterialIndex _0603MatIndex;
+        MaterialIndex BGAMatIndex;
+        MaterialIndex MCHMatIndex;
+        MaterialIndex SC0603MatIndex;
     };
 
     class DetectorConstruction : public G4VUserDetectorConstruction
@@ -103,6 +161,7 @@ namespace SimCalModule
         DetectorMessenger *fDetectorMessenger;
         CaloUnitParameter EcalUnitParameter;
         CaloUnitParameter HcalUnitParameter;
+        PCBParameter pcbParameter;
         G4bool ifcheckOverlaps;
         G4double EcalAbsorberThick;
         G4double HcalAbsorberThick;

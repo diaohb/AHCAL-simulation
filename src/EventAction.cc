@@ -31,8 +31,12 @@ namespace SimCalModule
         // ParticleEnergy = primary->GetGPS()->GetCurrentSource()->GetEneDist()->GetMonoEnergy() / MeV;
         ParticleEnergy = anEvent->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy();
 
-        const DetectorConstruction *detector = static_cast<const DetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+        DetectorConstruction *detector = const_cast<DetectorConstruction *>(static_cast<const DetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction()));
+        G4double tmin = 150. * ns;
+        G4double tmax = 4. * us;
 
+        // 均匀分布随机数 [0,1)
+        detector->SetHcalStepTimeLimit(tmin + (tmax - tmin) * G4UniformRand());
         if (fEcalCollID < 0 && detector->GetEcalModuleType() > 0)
         {
             auto sdManager = G4SDManager::GetSDMpointer();
@@ -44,6 +48,20 @@ namespace SimCalModule
             auto sdManager = G4SDManager::GetSDMpointer();
             fHcalCollID = sdManager->GetCollectionID("HcalUnitHitsCollection");
         }
+
+        // const G4PrimaryVertex* vertex = anEvent->GetPrimaryVertex();
+        // if (vertex) {
+        //     const G4PrimaryParticle* particle = vertex->GetPrimary();
+        //     if (particle) {
+        //         G4ThreeVector mom = particle->GetMomentum();
+        //         G4double kinE = particle->GetKineticEnergy();  // 直接取
+
+        //         G4cout << "Event " << anEvent->GetEventID()
+        //             << " primary momentum = " << mom.mag()
+        //             << " kinetic energy = " << kinE / GeV << " GeV"
+        //             << G4endl;
+        //     }
+        // }
     }
 
     void EventAction::EndOfEventAction(const G4Event *anEvent)

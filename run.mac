@@ -5,7 +5,7 @@
 
 /run/initialize
 
-/gps/particle mu-
+/gps/particle e-
 
 /gps/pos/type Plane
 /gps/pos/shape Square
@@ -15,4 +15,4 @@
 /gps/direction 0 0 1
 
 /gps/ene/mono 108 GeV
-/run/beamOn 100000
+/run/beamOn 10
