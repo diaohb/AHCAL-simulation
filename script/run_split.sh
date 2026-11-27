@@ -2,7 +2,7 @@
 set -e
 shopt -s failglob
 
-Title=ML_0126_trigger60_model_25_material_0_e_gradient
+Title=ML_0126_trigger60_model_25_material_0_e_universe_xy
 Project=/cefs/higgs/diaohb/SIM/AHCAL-simulation
 Dir=${Dir:-$Project/run/$Title}
 RunDir=${WorkDir:-$Dir/Run_$(date +%Y%m%d_%H%M%S)}

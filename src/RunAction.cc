@@ -42,6 +42,8 @@ namespace SimCalModule
             treeEvt = new TTree("treeEvt", "Info stored at Event level");
             treeEvt->Branch("EvtID", &EvtID, "EvtID/I");
             treeEvt->Branch("ParticleEnergy", &ParticleEnergy, "ParticleEnergy/D");
+            treeEvt->Branch("ParticleX", &ParticleX, "ParticleX/D");
+            treeEvt->Branch("ParticleY", &ParticleY, "ParticleY/D");
             treeEvt->Branch("CaloEdepSum", &CaloEdepSum, "CaloEdepSum/D");
             treeEvt->Branch("CaloVisibleEdepSum", &CaloVisibleEdepSum, "CaloVisibleEdepSum/D");
             treeEvt->Branch("EcalEdepSum", &EcalEdepSum, "EcalEdepSum/D");
@@ -126,6 +128,12 @@ namespace SimCalModule
         {
         case ParticleEnergy_Data:
             ParticleEnergy = data;
+            break;
+        case ParticleX_Data:
+            ParticleX = data;
+            break;
+        case ParticleY_Data:
+            ParticleY = data;
             break;
         case CaloEdepSum_Data:
             CaloEdepSum = data;

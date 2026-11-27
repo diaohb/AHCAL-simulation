@@ -35,7 +35,9 @@ namespace SimCalModule
         vecHcalHitTimeCell_Data,
         vecHcalToaCell_Data,
         vecSiPMHit_Data,
-        vecSiPMEdep_Data
+        vecSiPMEdep_Data,
+        ParticleX_Data,
+        ParticleY_Data
     };
 
     class EventAction;
@@ -61,6 +63,8 @@ namespace SimCalModule
         TTree *treeEvt;
         G4int EvtID;
         G4double ParticleEnergy;
+        G4double ParticleX;
+        G4double ParticleY;
         G4double CaloEdepSum;
         G4double CaloVisibleEdepSum;
         G4double EcalEdepSum;

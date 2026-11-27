@@ -5,6 +5,7 @@
 #include "HcalUnitSD.hh"
 
 #include "G4Event.hh"
+#include "G4PrimaryVertex.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4SDManager.hh"
@@ -133,6 +134,9 @@ namespace SimCalModule
 
         fRunAction->TransferData(EvtID, EvtID_Data);
         fRunAction->TransferData(ParticleEnergy, ParticleEnergy_Data);
+        const auto *vertex = anEvent->GetPrimaryVertex();
+        fRunAction->TransferData(vertex->GetX0() / mm, ParticleX_Data);
+        fRunAction->TransferData(vertex->GetY0() / mm, ParticleY_Data);
         fRunAction->TransferData(CaloEdepSum, CaloEdepSum_Data);
         fRunAction->TransferData(CaloVisibleEdepSum, CaloVisibleEdepSum_Data);
         fRunAction->TransferData(EcalEdepSum, EcalEdepSum_Data);

@@ -46,6 +46,8 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     //------------------------------------------------------
     Int_t EvtID;
     Double_t ParticleEnergy;
+    Double_t ParticleX;
+    Double_t ParticleY;
     Double_t CaloEdepSum;
     Double_t CaloVisibleEdepSum;
     Double_t EcalEdepSum;
@@ -73,6 +75,13 @@ void BeamDataStructure(TString InputFile, TString OutputFile, Int_t ECALOption)
     DataFile->GetObject("treeEvt",treeEvt);
     treeEvt->SetBranchAddress("EvtID", &EvtID);
     treeEvt->SetBranchAddress("ParticleEnergy", &ParticleEnergy);
+    if (treeEvt->GetBranch("ParticleX") && treeEvt->GetBranch("ParticleY"))
+    {
+        treeEvt->SetBranchAddress("ParticleX", &ParticleX);
+        treeEvt->SetBranchAddress("ParticleY", &ParticleY);
+        EventTree->Branch("ParticleX", &ParticleX, "ParticleX/D");
+        EventTree->Branch("ParticleY", &ParticleY, "ParticleY/D");
+    }
     treeEvt->SetBranchAddress("CaloVisibleEdepSum", &CaloVisibleEdepSum);
     treeEvt->SetBranchAddress("EcalEdepSum", &EcalEdepSum);
     treeEvt->SetBranchAddress("EcalVisibleEdepSum", &EcalVisibleEdepSum);

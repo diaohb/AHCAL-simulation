@@ -1,5 +1,5 @@
 #!/bin/bash
-Title=ML_0126_trigger60_model_25_material_0_e_universe
+Title=ML_0126_trigger60_model_25_material_0_e_discrete_center
 # Title=0630_0126_trigger60_model_25_material_0_pi
 # Title=mu-_30050126_40
 Project=SimCalModule
@@ -7,7 +7,7 @@ MyDir=/cefs/higgs/diaohb/SIM/AHCAL-simulation/
 rundir=${MyDir}/run/${Title}/
 rm -rf ${rundir}/run*
 mkdir -p ${rundir}
-cp ${MyDir}/run/lx-run.mac ${rundir}/run.mac
+cp ${MyDir}/run/lx+run.mac ${rundir}/run.mac
 NFile=200
 for i in $(seq 1 ${NFile})
 do
